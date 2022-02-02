@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         body: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(32),
             child: SafeArea(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -58,16 +58,16 @@ class _MyAppState extends State<MyApp> {
                   Text('Reachable: $_reachable'),
                   Text('Context: $_context'),
                   Text('Received contexts: $_receivedContexts'),
-                  ElevatedButton(
+                  TextButton(
                     child: const Text('Refresh'),
                     onPressed: initPlatformState,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   const Text('Send'),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
+                      TextButton(
                         child: const Text('Message'),
                         onPressed: () {
                           final message = {'data': 'Hello'};
@@ -75,8 +75,8 @@ class _MyAppState extends State<MyApp> {
                           setState(() => _log.add('Sent message: $message'));
                         },
                       ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
+                      const SizedBox(width: 8),
+                      TextButton(
                         child: const Text('Context'),
                         onPressed: () {
                           _count++;

@@ -9,14 +9,14 @@ class WatchConnectivity {
   final _messageStreamController =
       StreamController<Map<String, dynamic>>.broadcast();
   final _contextStreamController =
-      StreamController<List<Map<String, dynamic>>>.broadcast();
+      StreamController<Map<String, dynamic>>.broadcast();
 
-  /// Stream of messages received from watches
+  /// Stream of messages received
   Stream<Map<String, dynamic>> get messageStream =>
       _messageStreamController.stream;
 
-  /// Stream of contexts received from watches
-  Stream<List<Map<String, dynamic>>> get contextStream =>
+  /// Stream of contexts received
+  Stream<Map<String, dynamic>> get contextStream =>
       _contextStreamController.stream;
 
   /// Create a new instance of the plugin
@@ -27,12 +27,13 @@ class WatchConnectivity {
   Future _handle(MethodCall call) async {
     switch (call.method) {
       case 'didReceiveMessage':
-        _messageStreamController.add(call.arguments as Map<String, dynamic>);
+        _messageStreamController.add(Map<String, dynamic>.from(call.arguments));
         break;
       case 'didReceiveApplicationContext':
-        _contextStreamController
-            .add(call.arguments as List<Map<String, dynamic>>);
+        _contextStreamController.add(Map<String, dynamic>.from(call.arguments));
         break;
+      default:
+        throw UnimplementedError('${call.method} not implemented');
     }
   }
 
@@ -46,20 +47,20 @@ class WatchConnectivity {
 
   /// iOS: If the companion watch app is reachable
   ///
-  /// Android: If a watch is connected
+  /// Android: If any nodes are connected
   Future<bool> get isReachable async {
     final reachable = await _channel.invokeMethod<bool>('isReachable');
     return reachable ?? false;
   }
 
-  /// The most recent contextual data sent to watches
+  /// The most recently sent contextual data
   Future<Map<String, dynamic>> get applicationContext async {
     final applicationContext =
         await _channel.invokeMapMethod<String, dynamic>('applicationContext');
     return applicationContext ?? {};
   }
 
-  /// A dictionary containing the last update data received from watches
+  /// A dictionary containing the last update data received
   ///
   /// iOS: This will only ever contain one map
   ///
@@ -73,12 +74,12 @@ class WatchConnectivity {
     return transformedContexts ?? [];
   }
 
-  /// Send a message to all connected watches
+  /// Send a message to all nodes
   Future<void> sendMessage(Map<String, dynamic> message) {
     return _channel.invokeMethod('sendMessage', message);
   }
 
-  /// Updated the application context
+  /// Update the application context
   Future<void> updateApplicationContext(
     Map<String, dynamic> context,
   ) {
