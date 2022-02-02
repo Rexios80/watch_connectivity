@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+/// Plugin to communcate with Apple Watch and Wear OS watches
 class WatchConnectivity {
   static const MethodChannel _channel = MethodChannel('watch_connectivity');
 
@@ -35,6 +36,8 @@ class WatchConnectivity {
   }
 
   /// If a watch is paired
+  /// 
+  /// On Android, this checks if either the Wear OS or Galaxy Wearable app is installed
   Future<bool> get isPaired async {
     final paired = await _channel.invokeMethod<bool>('isPaired');
     return paired ?? false;
