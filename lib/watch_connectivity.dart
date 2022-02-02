@@ -58,6 +58,8 @@ class WatchConnectivity {
 
   /// A dictionary containing the last update data received from a paired and
   /// active device
+  /// 
+  /// On Android this returns the same data as [applicationContext]
   Future<Map<String, dynamic>> get receivedApplicationContext async {
     final receivedApplicationContext = await _channel
         .invokeMapMethod<String, dynamic>('receivedApplicationContext');
