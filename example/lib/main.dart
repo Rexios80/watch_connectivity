@@ -17,10 +17,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final _watch = WatchConnectivity();
 
+  var _count = 0;
+
   var _paired = false;
   var _reachable = false;
   var _context = <String, dynamic>{};
-  var _receivedContext = <String, dynamic>{};
+  var _receivedContexts = <Map<String, dynamic>>[];
   final _log = <String>[];
 
   @override
@@ -37,7 +39,7 @@ class _MyAppState extends State<MyApp> {
     _paired = await _watch.isPaired;
     _reachable = await _watch.isReachable;
     _context = await _watch.applicationContext;
-    _receivedContext = await _watch.receivedApplicationContext;
+    _receivedContexts = await _watch.receivedApplicationContexts;
     setState(() {});
   }
 
@@ -46,18 +48,49 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: ListView(
-            children: [
-              Text('Paired: $_paired'),
-              Text('Reachable: $_reachable'),
-              Text('Context: $_context'),
-              Text('Received context: $_receivedContext'),
-              ElevatedButton(
-                child: const Text('Refresh'),
-                onPressed: initPlatformState,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Paired: $_paired'),
+                  Text('Reachable: $_reachable'),
+                  Text('Context: $_context'),
+                  Text('Received contexts: $_receivedContexts'),
+                  ElevatedButton(
+                    child: const Text('Refresh'),
+                    onPressed: initPlatformState,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('Send'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        child: const Text('Message'),
+                        onPressed: () {
+                          final message = {'data': 'Hello'};
+                          _watch.sendMessage(message);
+                          setState(() => _log.add('Sent message: $message'));
+                        },
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        child: const Text('Context'),
+                        onPressed: () {
+                          _count++;
+                          final context = {'data': _count};
+                          _watch.updateApplicationContext(context);
+                          setState(() => _log.add('Sent context: $context'));
+                        },
+                      ),
+                    ],
+                  ),
+                  ..._log.reversed.map((e) => Text(e)),
+                ],
               ),
-              
-            ],
+            ),
           ),
         ),
       ),

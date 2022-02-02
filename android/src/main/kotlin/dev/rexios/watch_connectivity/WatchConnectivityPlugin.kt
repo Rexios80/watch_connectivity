@@ -1,6 +1,5 @@
 package dev.rexios.watch_connectivity
 
-import android.R.attr.data
 import android.content.pm.PackageManager
 import androidx.annotation.NonNull
 import com.google.android.gms.wearable.*
@@ -29,6 +28,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private lateinit var packageManager: PackageManager
+    private lateinit var localNode: Node
     private lateinit var nodeClient: NodeClient
     private lateinit var messageClient: MessageClient
     private lateinit var dataClient: DataClient
@@ -48,6 +48,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         messageClient.addListener(this)
         dataClient.addListener(this)
 
+        nodeClient.localNode.addOnSuccessListener { localNode = it }
     }
 
     override fun onDetachedFromActivityForConfigChanges() {}
@@ -59,8 +60,8 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             // Getters
             "isPaired" -> isPaired(result)
             "isReachable" -> isReachable(result)
-            // There is no equivalent to receivedApplicationContext on Android
-            "applicationContext", "receivedApplicationContext" -> applicationContext(result)
+            "applicationContext" -> applicationContext(result)
+            "receivedApplicationContexts" -> receivedApplicationContexts(result)
 
             // Methods
             "sendMessage" -> sendMessage(call, result)
@@ -106,10 +107,22 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private fun applicationContext(result: Result) {
         dataClient.dataItems
             .addOnSuccessListener { items ->
-                items
-                    .filter { it.uri.path?.contains(channelName) == true }
-                    // Should only be one item with the channelName in the URI
-                    .forEach { result.success(it) }
+                val localNodeItem = items.firstOrNull {
+                    // Only elements from the local node (there should only be one)
+                    it.uri.host == localNode.id && it.uri.path == channelName
+                }
+                result.success(localNodeItem ?: emptyMap<String, Any>())
+            }.addOnFailureListener { result.error(it.message, it.localizedMessage, it) }
+    }
+
+    private fun receivedApplicationContexts(result: Result) {
+        dataClient.dataItems
+            .addOnSuccessListener { items ->
+                val itemContents = items.filter {
+                    // Elements that are not from the local node
+                    it.uri.host != localNode.id && it.uri.path == channelName
+                }.map { objectFromBytes(it.data) }
+                result.success(itemContents)
             }.addOnFailureListener { result.error(it.message, it.localizedMessage, it) }
     }
 
@@ -123,7 +136,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     private fun updateApplicationContext(call: MethodCall, result: Result) {
         val eventData = objectToBytes(call.arguments)
-        val dataItem = PutDataRequest.create(channelName)
+        val dataItem = PutDataRequest.create("/$channelName")
         dataItem.data = eventData
         dataClient.putDataItem(dataItem)
             .addOnSuccessListener { result.success(null) }
@@ -138,10 +151,10 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     override fun onDataChanged(dataItems: DataEventBuffer) {
         dataItems
-            .filter { it.type == TYPE_CHANGED && it.dataItem.uri.path?.contains(channelName) == true }
+            .filter { it.type == TYPE_CHANGED && it.dataItem.uri.path!!.contains(channelName) }
             .forEach { item ->
                 val eventContent = objectFromBytes(item.dataItem.data)
-                channel.invokeMethod("didReceiveApplicationContext", eventContent)
+                channel.invokeMethod("didReceiveApplicationContexts", eventContent)
             }
     }
 }
