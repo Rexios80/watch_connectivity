@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-/// Plugin to communcate with Apple Watch and Wear OS watches
+/// Plugin to communcate with Apple Watch and Wear OS devices
 class WatchConnectivity {
   static const MethodChannel _channel = MethodChannel('watch_connectivity');
 
@@ -45,7 +45,7 @@ class WatchConnectivity {
     return paired ?? false;
   }
 
-  /// iOS: If the companion watch app is reachable
+  /// iOS: If the companion app is reachable
   ///
   /// Android: If any nodes are connected
   Future<bool> get isReachable async {

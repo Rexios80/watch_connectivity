@@ -30,10 +30,10 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private lateinit var packageManager: PackageManager
-    private lateinit var localNode: Node
     private lateinit var nodeClient: NodeClient
     private lateinit var messageClient: MessageClient
     private lateinit var dataClient: DataClient
+    private lateinit var localNode: Node
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
