@@ -29,14 +29,23 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
+        // Getters
         case "isPaired":
             result(session?.isPaired ?? false)
         case "isReachable":
             result(session?.isReachable ?? false)
+        case "applicationContext":
+            result(session?.applicationContext)
+        case "receivedApplicationContext":
+            result(session?.receivedApplicationContext)
+        
+        // Methods
         case "sendMessage":
             session?.sendMessage(call.arguments as! [String: Any], replyHandler: nil)
         case "updateApplicationContext":
             try? session?.updateApplicationContext(call.arguments as! [String: Any])
+        
+        // Not implemented
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -50,5 +59,9 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
     
     public func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
         channel.invokeMethod("didReceiveMessage", arguments: message)
+    }
+    
+    public func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
+        channel.invokeMethod("didReceiveApplicationContext", arguments: applicationContext)
     }
 }
