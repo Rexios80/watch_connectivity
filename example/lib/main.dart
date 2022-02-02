@@ -30,8 +30,10 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initPlatformState();
 
-    _watch.messageStream.listen((e) => _log.add('Received message: $e'));
-    _watch.contextStream.listen((e) => _log.add('Received context: $e'));
+    _watch.messageStream
+        .listen((e) => setState(() => _log.add('Received message: $e')));
+    _watch.contextStream
+        .listen((e) => setState(() => _log.add('Received context: $e')));
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.

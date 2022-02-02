@@ -91,14 +91,6 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         return ois.readObject()
     }
 
-    private fun invokeOnUiThread(method: String, arguments: Any?, callback: Result? = null) {
-        runOnUiThread { channel.invokeMethod(method, arguments, callback) }
-    }
-
-    private fun runOnUiThread(runnable: () -> Unit) {
-        Handler(Looper.getMainLooper()).post { runnable() }
-    }
-
     private fun isPaired(result: Result) {
         val apps = packageManager.getInstalledApplications(0)
         val wearAppInstalled =
@@ -161,15 +153,19 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     override fun onMessageReceived(message: MessageEvent) {
         val messageContent = objectFromBytes(message.data)
-        invokeOnUiThread("didReceiveMessage", messageContent)
+        channel.invokeMethod("didReceiveMessage", messageContent)
     }
 
     override fun onDataChanged(dataItems: DataEventBuffer) {
         dataItems
-            .filter { it.type == TYPE_CHANGED && it.dataItem.uri.path!!.contains(channelName) }
+            .filter {
+                it.type == TYPE_CHANGED
+                        && it.dataItem.uri.host != localNode.id
+                        && it.dataItem.uri.path == "/$channelName"
+            }
             .forEach { item ->
                 val eventContent = objectFromBytes(item.dataItem.data)
-                invokeOnUiThread("didReceiveApplicationContext", eventContent)
+                channel.invokeMethod("didReceiveApplicationContext", eventContent)
             }
     }
 }
