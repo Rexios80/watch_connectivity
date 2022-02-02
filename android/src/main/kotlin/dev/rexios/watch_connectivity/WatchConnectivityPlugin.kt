@@ -109,9 +109,14 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             .addOnSuccessListener { items ->
                 val localNodeItem = items.firstOrNull {
                     // Only elements from the local node (there should only be one)
-                    it.uri.host == localNode.id && it.uri.path == channelName
+                    it.uri.host == localNode.id && it.uri.path == "/$channelName"
                 }
-                result.success(localNodeItem ?: emptyMap<String, Any>())
+                if (localNodeItem != null) {
+                    val itemContent = objectFromBytes(localNodeItem.data)
+                    result.success(itemContent)
+                } else {
+                    result.success(emptyMap<String, Any>())
+                }
             }.addOnFailureListener { result.error(it.message, it.localizedMessage, it) }
     }
 
@@ -120,7 +125,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             .addOnSuccessListener { items ->
                 val itemContents = items.filter {
                     // Elements that are not from the local node
-                    it.uri.host != localNode.id && it.uri.path == channelName
+                    it.uri.host != localNode.id && it.uri.path == "/$channelName"
                 }.map { objectFromBytes(it.data) }
                 result.success(itemContents)
             }.addOnFailureListener { result.error(it.message, it.localizedMessage, it) }
