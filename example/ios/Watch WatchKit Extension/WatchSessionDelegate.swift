@@ -19,7 +19,8 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     
     override init() {
         super.init()
-        refresh()
+        session.delegate = self
+        session.activate()
     }
     
     func refresh() {
@@ -38,13 +39,15 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
         log.append("Sent context: \(context)")
     }
     
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {}
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        refresh()
+    }
     
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-        log.append("Received message: \(message)")
+        DispatchQueue.main.async { self.log.append("Received message: \(message)") }
     }
     
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
-        log.append("Received context: \(applicationContext)")
+        DispatchQueue.main.async { self.log.append("Received context: \(applicationContext)") }
     }
 }
