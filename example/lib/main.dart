@@ -89,6 +89,8 @@ class _MyAppState extends State<MyApp> {
                       ),
                     ],
                   ),
+                  const SizedBox(width: 8),
+                  const Text('Log'),
                   ..._log.reversed.map((e) => Text(e)),
                 ],
               ),
