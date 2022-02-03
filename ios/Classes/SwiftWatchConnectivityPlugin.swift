@@ -48,7 +48,7 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
                 try session?.updateApplicationContext(call.arguments as! [String: Any])
                 result(nil)
             } catch {
-                result(error)
+                result(FlutterError(code: "Error updating application context", message: error.localizedDescription, details: nil))
             }
         
         // Not implemented
