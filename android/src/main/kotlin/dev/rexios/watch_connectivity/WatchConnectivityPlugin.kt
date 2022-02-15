@@ -20,7 +20,7 @@ import java.io.ObjectOutputStream
 
 
 /** WatchConnectivityPlugin */
-class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
+class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
     private val channelName = "watch_connectivity"
 
@@ -38,16 +38,9 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
         channel.setMethodCallHandler(this)
-    }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
-        messageClient.removeListener(this)
-        dataClient.removeListener(this)
-    }
+        val context = flutterPluginBinding.applicationContext
 
-    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        val context = binding.activity
         packageManager = context.packageManager
         nodeClient = Wearable.getNodeClient(context)
         messageClient = Wearable.getMessageClient(context)
@@ -59,9 +52,11 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         nodeClient.localNode.addOnSuccessListener { localNode = it }
     }
 
-    override fun onDetachedFromActivityForConfigChanges() {}
-    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {}
-    override fun onDetachedFromActivity() {}
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+        messageClient.removeListener(this)
+        dataClient.removeListener(this)
+    }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
