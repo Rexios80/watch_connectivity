@@ -40,6 +40,12 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         channel.setMethodCallHandler(this)
     }
 
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+        messageClient.removeListener(this)
+        dataClient.removeListener(this)
+    }
+
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         val context = binding.activity
         packageManager = context.packageManager
@@ -72,10 +78,6 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             // Not implemented
             else -> result.notImplemented()
         }
-    }
-
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
     }
 
     private fun objectToBytes(`object`: Any): ByteArray {
