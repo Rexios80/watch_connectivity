@@ -37,6 +37,14 @@ class WatchConnectivity {
     }
   }
 
+  /// iOS: WCSession.isSupported()
+  ///
+  /// Android: Always true
+  Future<bool> get isSupported async {
+    final supported = await _channel.invokeMethod<bool>('isSupported');
+    return supported ?? false;
+  }
+
   /// iOS: If a watch is paired
   ///
   /// Android: If either the Wear OS or Galaxy Wearable app is installed

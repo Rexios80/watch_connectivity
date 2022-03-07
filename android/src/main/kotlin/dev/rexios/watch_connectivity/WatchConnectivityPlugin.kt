@@ -61,6 +61,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             // Getters
+            "isSupported" -> result.success(true)
             "isPaired" -> isPaired(result)
             "isReachable" -> isReachable(result)
             "applicationContext" -> applicationContext(result)

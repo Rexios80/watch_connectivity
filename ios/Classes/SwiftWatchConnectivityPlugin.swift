@@ -30,6 +30,8 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         // Getters
+        case "isSupported":
+            result(WCSession.isSupported())
         case "isPaired":
             result(session?.isPaired ?? false)
         case "isReachable":

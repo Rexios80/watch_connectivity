@@ -19,6 +19,7 @@ class _MyAppState extends State<MyApp> {
 
   var _count = 0;
 
+  var _supported = false;
   var _paired = false;
   var _reachable = false;
   var _context = <String, dynamic>{};
@@ -38,6 +39,7 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
+    _supported = await _watch.isSupported;
     _paired = await _watch.isPaired;
     _reachable = await _watch.isReachable;
     _context = await _watch.applicationContext;
@@ -56,6 +58,7 @@ class _MyAppState extends State<MyApp> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text('Supported: $_supported'),
                   Text('Paired: $_paired'),
                   Text('Reachable: $_reachable'),
                   Text('Context: $_context'),

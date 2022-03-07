@@ -14,6 +14,7 @@ Communication methods:
 - Receive context
 
 Other features:
+- Check if watches are supported by the current platform
 - Tell if a watch is paired
   - On Android it is not possible to check if a watch is paired. This plugin checks if either the Wear OS or Galaxy Wearable apps are installed.
 - Tell if the counterpart is reachable

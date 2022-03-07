@@ -11,7 +11,7 @@ import WatchConnectivity
 struct ContentView: View {
     @ObservedObject var session = WatchSessionDelegate()
     @State var count = 0
-    
+
     var body: some View {
         ScrollView {
             Text("Reachable: \(session.reachable.description)")
@@ -21,7 +21,7 @@ struct ContentView: View {
             Spacer().frame(height: 8)
             Text("Send")
             HStack {
-                Button("Message") { session.sendMessage(["data": "Hello"])}
+                Button("Message") { session.sendMessage(["data": "Hello"]) }
                 Button("Context") {
                     count += 1
                     session.updateApplicationContext(["data": count])
