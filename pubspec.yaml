@@ -1,6 +1,6 @@
 name: watch_connectivity
 description: Wrapper for WatchConnectivity on iOS and Wearable APIs on Android
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/Rexios80/watch_connectivity
 
 environment:
