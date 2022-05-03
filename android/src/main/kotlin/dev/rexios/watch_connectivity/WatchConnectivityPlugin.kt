@@ -3,9 +3,12 @@ package dev.rexios.watch_connectivity
 import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.NonNull
 import com.google.android.gms.wearable.*
 import com.google.android.gms.wearable.DataEvent.TYPE_CHANGED
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -17,41 +20,45 @@ import java.io.ObjectOutputStream
 
 
 /** WatchConnectivityPlugin */
-class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, WearableListenerService() {
+class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
+    MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
     private val channelName = "watch_connectivity"
 
-    /// Since the flutter plugin and android service are two different instances of this class,
-    /// we must make properties needed by both static
-    companion object {
-        private lateinit var channel: MethodChannel
-        private lateinit var localNode: Node
-    }
-
-    /// Package manager comes from the WearableListenerService context, but it's invalid here
-    private lateinit var mPackageManager: PackageManager
+    /// The MethodChannel that will the communication between Flutter and native Android
+    ///
+    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+    /// when the Flutter Engine is detached from the Activity
+    private lateinit var channel: MethodChannel
+    private lateinit var packageManager: PackageManager
     private lateinit var nodeClient: NodeClient
     private lateinit var messageClient: MessageClient
     private lateinit var dataClient: DataClient
+    private lateinit var localNode: Node
 
-    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
         channel.setMethodCallHandler(this)
 
         val context = flutterPluginBinding.applicationContext
 
-        mPackageManager = context.packageManager
+        packageManager = context.packageManager
         nodeClient = Wearable.getNodeClient(context)
         messageClient = Wearable.getMessageClient(context)
         dataClient = Wearable.getDataClient(context)
 
+        messageClient.addListener(this)
+        dataClient.addListener(this)
+
         nodeClient.localNode.addOnSuccessListener { localNode = it }
     }
 
-    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
+        messageClient.removeListener(this)
+        dataClient.removeListener(this)
     }
 
-    override fun onMethodCall(call: MethodCall, result: Result) {
+    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             // Getters
             "isSupported" -> result.success(true)
@@ -69,14 +76,6 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, WearableListen
         }
     }
 
-    private fun runOnUiThread(runnable: () -> Unit) {
-        Handler(Looper.getMainLooper()).post { runnable() }
-    }
-
-    private fun invokeOnUiThread(method: String, arguments: Any?, callback: Result? = null) {
-        runOnUiThread { channel.invokeMethod(method, arguments, callback) }
-    }
-
     private fun objectToBytes(`object`: Any): ByteArray {
         val baos = ByteArrayOutputStream()
         val oos = ObjectOutputStream(baos)
@@ -91,7 +90,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, WearableListen
     }
 
     private fun isPaired(result: Result) {
-        val apps = mPackageManager.getInstalledApplications(0)
+        val apps = packageManager.getInstalledApplications(0)
         val wearableAppInstalled =
             apps.any { it.packageName == "com.google.android.wearable.app" || it.packageName == "com.samsung.android.app.watchmanager" }
         result.success(wearableAppInstalled)
@@ -150,7 +149,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, WearableListen
 
     override fun onMessageReceived(message: MessageEvent) {
         val messageContent = objectFromBytes(message.data)
-        invokeOnUiThread("didReceiveMessage", messageContent)
+        channel.invokeMethod("didReceiveMessage", messageContent)
     }
 
     override fun onDataChanged(dataItems: DataEventBuffer) {
@@ -162,7 +161,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler, WearableListen
             }
             .forEach { item ->
                 val eventContent = objectFromBytes(item.dataItem.data)
-                invokeOnUiThread("didReceiveApplicationContext", eventContent)
+                channel.invokeMethod("didReceiveApplicationContext", eventContent)
             }
     }
 }
