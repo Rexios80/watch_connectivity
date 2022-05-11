@@ -64,8 +64,8 @@ class _MyAppState extends State<MyApp> {
                   Text('Context: $_context'),
                   Text('Received contexts: $_receivedContexts'),
                   TextButton(
-                    child: const Text('Refresh'),
                     onPressed: initPlatformState,
+                    child: const Text('Refresh'),
                   ),
                   const SizedBox(height: 8),
                   const Text('Send'),
