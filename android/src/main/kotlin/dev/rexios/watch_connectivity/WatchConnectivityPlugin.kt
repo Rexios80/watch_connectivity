@@ -1,14 +1,9 @@
 package dev.rexios.watch_connectivity
 
 import android.content.pm.PackageManager
-import android.os.Handler
-import android.os.Looper
-import androidx.annotation.NonNull
 import com.google.android.gms.wearable.*
 import com.google.android.gms.wearable.DataEvent.TYPE_CHANGED
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.embedding.engine.plugins.activity.ActivityAware
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -35,7 +30,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     private lateinit var dataClient: DataClient
     private lateinit var localNode: Node
 
-    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
         channel.setMethodCallHandler(this)
 
@@ -52,13 +47,13 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
         nodeClient.localNode.addOnSuccessListener { localNode = it }
     }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
         messageClient.removeListener(this)
         dataClient.removeListener(this)
     }
 
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
             // Getters
             "isSupported" -> result.success(true)
@@ -99,7 +94,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     private fun isReachable(result: Result) {
         nodeClient.connectedNodes
             .addOnSuccessListener { result.success(it.isNotEmpty()) }
-            .addOnFailureListener { result.error(it.message, it.localizedMessage, it) }
+            .addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
     private fun applicationContext(result: Result) {
@@ -115,7 +110,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
                 } else {
                     result.success(emptyMap<String, Any>())
                 }
-            }.addOnFailureListener { result.error(it.message, it.localizedMessage, it) }
+            }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
     private fun receivedApplicationContexts(result: Result) {
@@ -126,7 +121,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
                     it.uri.host != localNode.id && it.uri.path == "/$channelName"
                 }.map { objectFromBytes(it.data) }
                 result.success(itemContents)
-            }.addOnFailureListener { result.error(it.message, it.localizedMessage, it) }
+            }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
     private fun sendMessage(call: MethodCall, result: Result) {
@@ -134,7 +129,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
         nodeClient.connectedNodes.addOnSuccessListener { nodes ->
             nodes.forEach { messageClient.sendMessage(it.id, channelName, messageData) }
             result.success(null)
-        }.addOnFailureListener { result.error(it.message, it.localizedMessage, it) }
+        }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
     private fun updateApplicationContext(call: MethodCall, result: Result) {
@@ -143,7 +138,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
         dataItem.data = eventData
         dataClient.putDataItem(dataItem)
             .addOnSuccessListener { result.success(null) }
-            .addOnFailureListener { result.error(it.message, it.localizedMessage, it) }
+            .addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
 
     }
 
