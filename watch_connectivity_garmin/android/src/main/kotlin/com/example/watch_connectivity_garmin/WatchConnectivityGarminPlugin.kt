@@ -1,5 +1,6 @@
 package com.example.watch_connectivity_garmin
 
+import android.content.pm.PackageManager
 import androidx.annotation.NonNull
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin

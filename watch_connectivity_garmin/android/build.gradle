@@ -6,9 +6,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        flatDir {
-            dirs 'libs'
-        }
     }
 
     dependencies {
@@ -21,6 +18,19 @@ rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
+
+        // This is stupid, but local file dependencies weren't working
+        ivy {
+            url 'https://developer.garmin.com/downloads/connect-iq/sdks/'
+
+            patternLayout {
+                artifact '/[module]-[revision].[ext]'
+            }
+
+            // This is required in Gradle 6.0+ as metadata file (ivy.xml)
+            // is mandatory. Docs linked below this code section
+            metadataSources { artifact() }
+        }
     }
 }
 
@@ -51,5 +61,5 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    api(name: 'connectiq-mobile-sdk-android', ext: 'aar')
+    api 'garmin:connectiq-mobile-sdk-android:1.5@aar'
 }
