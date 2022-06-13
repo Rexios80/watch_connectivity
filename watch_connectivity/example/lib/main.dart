@@ -38,9 +38,9 @@ class _MyAppState extends State<MyApp> {
         .listen((e) => setState(() => _log.add('Received context: $e')));
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    switch (_watch.type) {
+  void recreatePlugin(WatchType type) async {
+    _watch = WatchConnectivity(type: type);
+    switch (type) {
       case WatchType.base:
         break;
       case WatchType.garmin:
@@ -49,6 +49,11 @@ class _MyAppState extends State<MyApp> {
         break;
     }
 
+    initPlatformState();
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  void initPlatformState() async {
     _supported = await _watch.isSupported;
     _paired = await _watch.isPaired;
     _reachable = await _watch.isReachable;
@@ -69,6 +74,7 @@ class _MyAppState extends State<MyApp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   DropdownButton<WatchType>(
+                    value: WatchType.base,
                     items: WatchType.values
                         .map(
                           (e) =>
@@ -77,8 +83,7 @@ class _MyAppState extends State<MyApp> {
                         .toList(),
                     onChanged: (e) {
                       if (e == null) return;
-                      _watch = WatchConnectivity(type: e);
-                      initPlatformState();
+                      recreatePlugin(e);
                     },
                   ),
                   Text('Supported: $_supported'),
