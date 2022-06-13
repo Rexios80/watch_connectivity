@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:watch_connectivity/watch_connectivity.dart';
+import 'package:watch_connectivity_garmin/watch_connectivity_garmin.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,6 +40,15 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
+    switch (_watch.type) {
+      case WatchType.base:
+        break;
+      case WatchType.garmin:
+        await _watch
+            .initialize(GarminInitializationOptions(applicationId: 'idk_yet'));
+        break;
+    }
+
     _supported = await _watch.isSupported;
     _paired = await _watch.isPaired;
     _reachable = await _watch.isReachable;
