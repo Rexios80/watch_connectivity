@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.example.watch_connectivity_garmin">
+  <queries>
+    <package android:name="com.garmin.android.apps.connectmobile" />
+  </queries>
+</manifest>

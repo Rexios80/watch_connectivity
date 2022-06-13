@@ -4,7 +4,10 @@ import 'package:flutter/services.dart';
 
 /// Plugin to communcate with Apple Watch and Wear OS devices
 class WatchConnectivity {
-  static const MethodChannel _channel = MethodChannel('watch_connectivity');
+  late final MethodChannel _channel;
+
+  /// The type of watch this plugin instance communicates with
+  final WatchType type;
 
   final _messageStreamController =
       StreamController<Map<String, dynamic>>.broadcast();
@@ -16,11 +19,23 @@ class WatchConnectivity {
       _messageStreamController.stream;
 
   /// Stream of contexts received
+  ///
+  /// Unsupported watch types:
+  /// - [WatchType.garmin]
   Stream<Map<String, dynamic>> get contextStream =>
       _contextStreamController.stream;
 
   /// Create a new instance of the plugin
-  WatchConnectivity() {
+  WatchConnectivity({this.type = WatchType.base}) {
+    switch (type) {
+      case WatchType.base:
+        _channel = const MethodChannel('watch_connectivity');
+        break;
+      case WatchType.garmin:
+        _channel = const MethodChannel('watch_connectivity_garmin');
+        break;
+    }
+
     _channel.setMethodCallHandler(_handle);
   }
 
@@ -37,31 +52,38 @@ class WatchConnectivity {
     }
   }
 
-  /// iOS: WCSession.isSupported()
+  /// Apple Watch: WCSession.isSupported()
   ///
-  /// Android: Always true
+  /// WearOS: Always true
+  /// 
+  /// Garmin: If the Garmin Connect app is installed
   Future<bool> get isSupported async {
     final supported = await _channel.invokeMethod<bool>('isSupported');
     return supported ?? false;
   }
 
-  /// iOS: If a watch is paired
+  /// Apple Watch, Garmin: If a watch is paired
   ///
-  /// Android: If either the Wear OS or Galaxy Wearable app is installed
+  /// WearOS: If either the Wear OS or Galaxy Wearable app is installed
   Future<bool> get isPaired async {
     final paired = await _channel.invokeMethod<bool>('isPaired');
     return paired ?? false;
   }
 
-  /// iOS: If the companion app is reachable
+  /// Apple Watch: If the companion app is reachable
   ///
-  /// Android: If any nodes are connected
+  /// WearOS: If any nodes are connected
+  /// 
+  /// Garmin: If the companion app is installed
   Future<bool> get isReachable async {
     final reachable = await _channel.invokeMethod<bool>('isReachable');
     return reachable ?? false;
   }
 
   /// The most recently sent contextual data
+  ///
+  /// Unsupported watch types:
+  /// - [WatchType.garmin]
   Future<Map<String, dynamic>> get applicationContext async {
     final applicationContext =
         await _channel.invokeMapMethod<String, dynamic>('applicationContext');
@@ -70,9 +92,12 @@ class WatchConnectivity {
 
   /// A dictionary containing the last update data received
   ///
-  /// iOS: This will only ever contain one map
+  /// Apple Watch: This will only ever contain one map
   ///
-  /// Android: This will contain one map for every node that has sent a context
+  /// WearOS: This will contain one map for every node that has sent a context
+  ///
+  /// Unsupported watch types:
+  /// - [WatchType.garmin]
   Future<List<Map<String, dynamic>>> get receivedApplicationContexts async {
     final receivedApplicationContexts =
         await _channel.invokeListMethod('receivedApplicationContexts');
@@ -88,9 +113,23 @@ class WatchConnectivity {
   }
 
   /// Update the application context
+  ///
+  /// Unsupported watch types:
+  /// - [WatchType.garmin]
   Future<void> updateApplicationContext(
     Map<String, dynamic> context,
   ) {
     return _channel.invokeMethod('updateApplicationContext', context);
   }
+}
+
+/// Enum of watch types this plugin supports
+enum WatchType {
+  /// WearOS and Apple Watch
+  base,
+
+  /// Garmin watch
+  ///
+  /// Requires the `watch_connectivity_garmin` plugin
+  garmin,
 }

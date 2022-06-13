@@ -15,7 +15,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _watch = WatchConnectivity();
+  var _watch = WatchConnectivity();
 
   var _count = 0;
 
@@ -58,6 +58,19 @@ class _MyAppState extends State<MyApp> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  DropdownButton<WatchType>(
+                    items: WatchType.values
+                        .map(
+                          (e) =>
+                              DropdownMenuItem(value: e, child: Text(e.name)),
+                        )
+                        .toList(),
+                    onChanged: (e) {
+                      if (e == null) return;
+                      _watch = WatchConnectivity(type: e);
+                      initPlatformState();
+                    },
+                  ),
                   Text('Supported: $_supported'),
                   Text('Paired: $_paired'),
                   Text('Reachable: $_reachable'),
