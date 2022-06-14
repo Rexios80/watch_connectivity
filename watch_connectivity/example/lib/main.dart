@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 import 'package:watch_connectivity/watch_connectivity.dart';
 import 'package:watch_connectivity_garmin/watch_connectivity_garmin.dart';

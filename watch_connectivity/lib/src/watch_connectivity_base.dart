@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:watch_connectivity/watch_connectivity.dart';
 
-/// Plugin to communcate with Apple Watch and Wear OS devices
+/// Plugin to communcate with watch devices
 class WatchConnectivity {
   late final MethodChannel _channel;
 
