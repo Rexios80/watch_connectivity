@@ -29,6 +29,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    // Change this to the WatchType you want to use
     createPlugin(WatchType.base);
   }
 
@@ -102,16 +103,18 @@ class _MyAppState extends State<MyApp> {
                           setState(() => _log.add('Sent message: $message'));
                         },
                       ),
-                      const SizedBox(width: 8),
-                      TextButton(
-                        child: const Text('Context'),
-                        onPressed: () {
-                          _count++;
-                          final context = {'data': _count};
-                          _watch.updateApplicationContext(context);
-                          setState(() => _log.add('Sent context: $context'));
-                        },
-                      ),
+                      if (_watch.type != WatchType.garmin) ...[
+                        const SizedBox(width: 8),
+                        TextButton(
+                          child: const Text('Context'),
+                          onPressed: () {
+                            _count++;
+                            final context = {'data': _count};
+                            _watch.updateApplicationContext(context);
+                            setState(() => _log.add('Sent context: $context'));
+                          },
+                        ),
+                      ],
                     ],
                   ),
                   const SizedBox(width: 8),
