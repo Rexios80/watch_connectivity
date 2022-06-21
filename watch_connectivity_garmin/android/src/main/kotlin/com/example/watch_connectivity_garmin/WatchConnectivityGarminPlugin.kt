@@ -15,6 +15,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 
 /** WatchConnectivityGarminPlugin */
@@ -124,9 +125,7 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
                 }
             }
         )
-        // TODO: Handle this better
-        // This call wasn't calling the callbacks last I checked
-        latch.await(100, TimeUnit.MILLISECONDS)
+        latch.await()
         return installedApp
     }
 
@@ -142,34 +141,41 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun isReachable(result: Result) {
-        var installedApp: IQApp? = null
-        for (device in connectIQ.connectedDevices ?: listOf()) {
-            installedApp = getApplicationForDevice(device)
-            if (installedApp != null) break
+        thread {
+            for (device in connectIQ.connectedDevices ?: listOf()) {
+                val installedApp = getApplicationForDevice(device)
+                if (installedApp != null) {
+                    result.success(true)
+                    return@thread
+                }
+            }
+            result.success(false)
         }
-        result.success(installedApp != null)
     }
+
 
     private fun sendMessage(call: MethodCall, result: Result) {
         val devices = connectIQ.connectedDevices ?: listOf()
 
-        val latch = CountDownLatch(devices.count())
-        val errors = mutableListOf<ConnectIQ.IQMessageStatus>()
-        for (device in devices) {
-            connectIQ.sendMessage(device, iqApp, call.arguments) { _, _, status ->
-                if (status != ConnectIQ.IQMessageStatus.SUCCESS) {
-                    errors.add(status)
+        thread {
+            val latch = CountDownLatch(devices.count())
+            val errors = mutableListOf<ConnectIQ.IQMessageStatus>()
+            for (device in devices) {
+                connectIQ.sendMessage(device, iqApp, call.arguments) { _, _, status ->
+                    if (status != ConnectIQ.IQMessageStatus.SUCCESS) {
+                        errors.add(status)
+                    }
+
+                    latch.countDown()
                 }
-
-                latch.countDown()
             }
-        }
 
-        latch.await()
-        if (errors.isNotEmpty()) {
-            result.error(errors.toString(), "Unable to send message", null)
-        } else {
-            result.success(null)
+            latch.await()
+            if (errors.isNotEmpty()) {
+                result.error(errors.toString(), "Unable to send message", null)
+            } else {
+                result.success(null)
+            }
         }
     }
 }
