@@ -43,8 +43,11 @@ class _MyAppState extends State<MyApp> {
       case WatchType.base:
         break;
       case WatchType.garmin:
-        await _watch
-            .initialize(GarminInitializationOptions(applicationId: 'idk_yet'));
+        await _watch.initialize(
+          GarminInitializationOptions(
+            applicationId: 'daed64bf-ecee-4b75-b736-f0f834801d6a',
+          ),
+        );
         break;
     }
 
@@ -56,8 +59,10 @@ class _MyAppState extends State<MyApp> {
     _supported = await _watch.isSupported;
     _paired = await _watch.isPaired;
     _reachable = await _watch.isReachable;
-    _context = await _watch.applicationContext;
-    _receivedContexts = await _watch.receivedApplicationContexts;
+    if (_watch.type != WatchType.garmin) {
+      _context = await _watch.applicationContext;
+      _receivedContexts = await _watch.receivedApplicationContexts;
+    }
     setState(() {});
   }
 
@@ -73,7 +78,7 @@ class _MyAppState extends State<MyApp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   DropdownButton<WatchType>(
-                    value: WatchType.base,
+                    value: _watch.type,
                     items: WatchType.values
                         .map(
                           (e) =>
@@ -88,8 +93,10 @@ class _MyAppState extends State<MyApp> {
                   Text('Supported: $_supported'),
                   Text('Paired: $_paired'),
                   Text('Reachable: $_reachable'),
-                  Text('Context: $_context'),
-                  Text('Received contexts: $_receivedContexts'),
+                  if (_watch.type != WatchType.garmin) ...[
+                    Text('Context: $_context'),
+                    Text('Received contexts: $_receivedContexts'),
+                  ],
                   TextButton(
                     onPressed: initPlatformState,
                     child: const Text('Refresh'),

@@ -14,6 +14,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 
 /** WatchConnectivityGarminPlugin */
@@ -26,8 +27,7 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var context: Context
     private lateinit var packageManager: PackageManager
     private lateinit var connectIQ: ConnectIQ
-    private lateinit var applicationId: String
-    private val deviceAppMap = mutableMapOf<Long, IQApp>()
+    private lateinit var iqApp: IQApp
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "watch_connectivity_garmin")
@@ -61,7 +61,8 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun initialize(call: MethodCall, result: Result) {
-        applicationId = call.argument<String>("applicationId")!!
+        val applicationId = call.argument<String>("applicationId")!!
+        iqApp = IQApp(applicationId)
 
         connectIQ.initialize(
             context,
@@ -97,38 +98,36 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun processDeviceStatus(device: IQDevice, status: IQDevice.IQDeviceStatus) {
         if (status == IQDevice.IQDeviceStatus.CONNECTED) {
-            getApplicationForDevice(device)
-            connectIQ.registerForAppEvents(
-                device, deviceAppMap[device.deviceIdentifier]
-            ) { _, _, data, status ->
+            connectIQ.registerForAppEvents(device, iqApp) { _, _, data, status ->
                 if (status != ConnectIQ.IQMessageStatus.SUCCESS) return@registerForAppEvents
                 // TODO: Send to Flutter
             }
         } else {
-            val app = deviceAppMap[device.deviceIdentifier] ?: return
-            connectIQ.unregisterForApplicationEvents(device, app)
-            deviceAppMap.remove(device.deviceIdentifier)
+            connectIQ.unregisterForApplicationEvents(device, iqApp)
         }
     }
 
-    private fun getApplicationForDevice(device: IQDevice) {
+    private fun getApplicationForDevice(device: IQDevice): IQApp? {
+        var installedApp: IQApp? = null
         val latch = CountDownLatch(1)
-        connectIQ.getApplicationInfo(applicationId, device, object : IQApplicationInfoListener {
-            override fun onApplicationInfoReceived(app: IQApp?) {
-                if (app != null) {
-                    deviceAppMap[device.deviceIdentifier] = app
-                } else {
-                    deviceAppMap.remove(device.deviceIdentifier)
+        connectIQ.getApplicationInfo(
+            iqApp.applicationId,
+            device,
+            object : IQApplicationInfoListener {
+                override fun onApplicationInfoReceived(app: IQApp?) {
+                    installedApp = app
+                    latch.countDown()
                 }
-                latch.countDown()
-            }
 
-            override fun onApplicationNotInstalled(p0: String?) {
-                deviceAppMap.remove(device.deviceIdentifier)
-                latch.countDown()
+                override fun onApplicationNotInstalled(p0: String?) {
+                    latch.countDown()
+                }
             }
-        })
-        latch.await()
+        )
+        // TODO: Handle this better
+        // This call wasn't calling the callbacks last I checked
+        latch.await(100, TimeUnit.MILLISECONDS)
+        return installedApp
     }
 
     private fun isSupported(result: Result) {
@@ -143,7 +142,12 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun isReachable(result: Result) {
-        result.success(deviceAppMap.isNotEmpty())
+        var installedApp: IQApp? = null
+        for (device in connectIQ.connectedDevices ?: listOf()) {
+            installedApp = getApplicationForDevice(device)
+            if (installedApp != null) break
+        }
+        result.success(installedApp != null)
     }
 
     private fun sendMessage(call: MethodCall, result: Result) {
@@ -152,16 +156,7 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
         val latch = CountDownLatch(devices.count())
         val errors = mutableListOf<ConnectIQ.IQMessageStatus>()
         for (device in devices) {
-            val app = deviceAppMap[device.deviceIdentifier]
-            if (app == null) {
-                latch.countDown()
-                continue
-            }
-            connectIQ.sendMessage(
-                device,
-                app,
-                call.arguments
-            ) { _, _, status ->
+            connectIQ.sendMessage(device, iqApp, call.arguments) { _, _, status ->
                 if (status != ConnectIQ.IQMessageStatus.SUCCESS) {
                     errors.add(status)
                 }
