@@ -15,7 +15,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var _watch = WatchConnectivity();
+  late final WatchConnectivity _watch;
 
   var _count = 0;
 
@@ -29,15 +29,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-
-    _watch.messageStream
-        .listen((e) => setState(() => _log.add('Received message: $e')));
-    _watch.contextStream
-        .listen((e) => setState(() => _log.add('Received context: $e')));
+    createPlugin(WatchType.base);
   }
 
-  void recreatePlugin(WatchType type) async {
+  void createPlugin(WatchType type) async {
     _watch = WatchConnectivity(type: type);
     switch (type) {
       case WatchType.base:
@@ -50,6 +45,11 @@ class _MyAppState extends State<MyApp> {
         );
         break;
     }
+
+    _watch.messageStream
+        .listen((e) => setState(() => _log.add('Received message: $e')));
+    _watch.contextStream
+        .listen((e) => setState(() => _log.add('Received context: $e')));
 
     initPlatformState();
   }
@@ -77,19 +77,7 @@ class _MyAppState extends State<MyApp> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  DropdownButton<WatchType>(
-                    value: _watch.type,
-                    items: WatchType.values
-                        .map(
-                          (e) =>
-                              DropdownMenuItem(value: e, child: Text(e.name)),
-                        )
-                        .toList(),
-                    onChanged: (e) {
-                      if (e == null) return;
-                      recreatePlugin(e);
-                    },
-                  ),
+                  Text('Watch type: ${_watch.type.name}'),
                   Text('Supported: $_supported'),
                   Text('Paired: $_paired'),
                   Text('Reachable: $_reachable'),

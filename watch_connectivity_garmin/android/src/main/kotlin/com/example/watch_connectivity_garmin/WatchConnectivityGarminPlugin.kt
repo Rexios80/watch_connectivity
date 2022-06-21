@@ -14,7 +14,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 
@@ -101,7 +100,9 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
         if (status == IQDevice.IQDeviceStatus.CONNECTED) {
             connectIQ.registerForAppEvents(device, iqApp) { _, _, data, status ->
                 if (status != ConnectIQ.IQMessageStatus.SUCCESS) return@registerForAppEvents
-                // TODO: Send to Flutter
+                for (datum in data) {
+                    channel.invokeMethod("didReceiveMessage", datum)
+                }
             }
         } else {
             connectIQ.unregisterForApplicationEvents(device, iqApp)
