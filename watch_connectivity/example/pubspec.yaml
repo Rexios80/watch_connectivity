@@ -9,6 +9,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  watch_connectivity_platform_interface:
+    path: ../../watch_connectivity_platform_interface
   watch_connectivity:
     # When depending on this package from a real application you should use:
     #   watch_connectivity: ^x.y.z

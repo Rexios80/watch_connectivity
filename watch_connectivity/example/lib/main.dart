@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:watch_connectivity/watch_connectivity.dart';
 import 'package:watch_connectivity_garmin/watch_connectivity_garmin.dart';
+import 'package:watch_connectivity_platform_interface/watch_connectivity_platform_interface.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late final WatchConnectivity _watch;
+  late final WatchConnectivityPlatformInterface _watch;
 
   var _count = 0;
 
@@ -29,22 +30,17 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Change this to the WatchType you want to use
-    createPlugin(WatchType.base);
-  }
 
-  void createPlugin(WatchType type) async {
-    _watch = WatchConnectivity(type: type);
-    switch (type) {
-      case WatchType.base:
-        break;
-      case WatchType.garmin:
-        await _watch.initialize(
-          GarminInitializationOptions(
-            applicationId: 'daed64bf-ecee-4b75-b736-f0f834801d6a',
-          ),
-        );
-        break;
+    // Change this to the plugin you want to test.
+    // e.g. `_watch = WatchConnectivityGarmin();`
+    _watch = WatchConnectivity();
+
+    if (_watch is WatchConnectivityGarmin) {
+      (_watch as WatchConnectivityGarmin).initialize(
+        GarminInitializationOptions(
+          applicationId: 'daed64bf-ecee-4b75-b736-f0f834801d6a',
+        ),
+      );
     }
 
     _watch.messageStream
@@ -60,7 +56,7 @@ class _MyAppState extends State<MyApp> {
     _supported = await _watch.isSupported;
     _paired = await _watch.isPaired;
     _reachable = await _watch.isReachable;
-    if (_watch.type != WatchType.garmin) {
+    if (_watch is! WatchConnectivityGarmin) {
       _context = await _watch.applicationContext;
       _receivedContexts = await _watch.receivedApplicationContexts;
     }
@@ -78,11 +74,10 @@ class _MyAppState extends State<MyApp> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Watch type: ${_watch.type.name}'),
                   Text('Supported: $_supported'),
                   Text('Paired: $_paired'),
                   Text('Reachable: $_reachable'),
-                  if (_watch.type != WatchType.garmin) ...[
+                  if (_watch is! WatchConnectivityGarmin) ...[
                     Text('Context: $_context'),
                     Text('Received contexts: $_receivedContexts'),
                   ],
@@ -103,7 +98,7 @@ class _MyAppState extends State<MyApp> {
                           setState(() => _log.add('Sent message: $message'));
                         },
                       ),
-                      if (_watch.type != WatchType.garmin) ...[
+                      if (_watch is! WatchConnectivityGarmin) ...[
                         const SizedBox(width: 8),
                         TextButton(
                           child: const Text('Context'),
