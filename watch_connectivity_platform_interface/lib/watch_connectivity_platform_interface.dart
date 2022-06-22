@@ -1,0 +1,3 @@
+library watch_connectivity_platform_interface;
+
+export 'src/watch_connectivity_platform_interface_base.dart';

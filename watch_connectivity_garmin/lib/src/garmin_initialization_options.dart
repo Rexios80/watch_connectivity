@@ -1,7 +1,5 @@
-import 'package:watch_connectivity/watch_connectivity.dart';
-
 /// Initialization options for the Garmin SDK
-class GarminInitializationOptions extends WatchInitializationOptions {
+class GarminInitializationOptions {
   /// The id of the companion application to communicate with
   final String applicationId;
 
@@ -14,7 +12,7 @@ class GarminInitializationOptions extends WatchInitializationOptions {
     this.autoUI = false,
   });
 
-  @override
+  /// Convert to JSON
   Map<String, dynamic> toJson() => {
         'applicationId': applicationId,
         'autoUI': autoUI,
