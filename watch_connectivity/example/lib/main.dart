@@ -38,6 +38,7 @@ class _MyAppState extends State<MyApp> {
       (_watch as WatchConnectivityGarmin).initialize(
         GarminInitializationOptions(
           applicationId: 'daed64bf-ecee-4b75-b736-f0f834801d6a',
+          urlScheme: 'watch_connectivity_example',
         ),
       );
     }

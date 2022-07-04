@@ -1,5 +1,4 @@
 import 'package:watch_connectivity_garmin/watch_connectivity_garmin.dart';
-import 'package:watch_connectivity_platform_interface/watch_connectivity_platform_interface.dart';
 
 /// Plugin to communicate with Garmin watches
 class WatchConnectivityGarmin extends WatchConnectivityBase {
@@ -34,4 +33,12 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
   @override
   Future<void> updateApplicationContext(Map<String, dynamic> context) =>
       throw UnsupportedError('Unsupported by Garmin watches');
+
+  /// Launches Garmin Connect Mobile for the purpose of retrieving a list of
+  /// ConnectIQ-compatible devices.
+  /// 
+  /// iOS only
+  Future<void> showDeviceSelection() {
+    return channel.invokeMethod('showDeviceSelection');
+  }
 }
