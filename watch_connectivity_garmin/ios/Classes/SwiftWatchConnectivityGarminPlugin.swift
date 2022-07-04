@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import ConnectIQ
 
 public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -10,5 +11,7 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     result("iOS " + UIDevice.current.systemVersion)
+      
+      ConnectIQ.sharedInstance()
   }
 }
