@@ -7,13 +7,18 @@ A new Flutter plugin project.
 <!-- TODO -->
 iOS podfile changes:
 ```ruby
+platform :ios, '13.0'
+
+...
+
 target 'Runner' do
   ...
 
   pod 'ConnectIQ', :podspec => 'ConnectIQ.podspec'
 end
-```
-```ruby
+
+...
+
 post_install do |installer|
   ...
 

@@ -27,21 +27,20 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         // Getters
-//        case "isSupported":
-//            result(WCSession.isSupported())
-//        case "isPaired":
-//            result(session?.isPaired ?? false)
-//        case "isReachable":
-//            result(session?.isReachable ?? false)
+        case "isSupported":
+            isSupported(result)
+        case "isPaired":
+            isPaired(result)
+        case "isReachable":
+            isReachable(result)
 
         // Methods
         case "initialize":
             initialize(call, result)
         case "showDeviceSelection":
             showDeviceSelection(result)
-//        case "sendMessage":
-//            session?.sendMessage(call.arguments as! [String: Any], replyHandler: nil)
-//            result(nil)
+        case "sendMessage":
+            sendMessage(call, result)
 
         // Not implemented
         default:
@@ -68,11 +67,19 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin {
         return true
     }
 
+    private func getCachedDevices() -> [IQDevice] {
+        return defaults.stringArray(forKey: Self.deviceIdsKey)?.map { IQDevice(id: UUID(uuidString: $0), modelName: "", friendlyName: "")! } ?? []
+    }
+
+    private func createApps() -> [IQApp] {
+        return getCachedDevices().map { IQApp(uuid: UUID(uuidString: applicationId!)!, store: UUID(), device: $0) }
+    }
+
     private func initialize(_ call: FlutterMethodCall, _ result: FlutterResult) {
         let args = call.arguments as! [String: Any]
         applicationId = args["applicationId"] as? String
         urlScheme = args["urlScheme"] as? String
-        
+
         let autoUI = args["autoUI"] as? Bool ?? false
 
         connectIQ.initialize(withUrlScheme: urlScheme, uiOverrideDelegate: autoUI ? nil : IQUIOverrideDelegateStub())
@@ -82,6 +89,59 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin {
     private func showDeviceSelection(_ result: FlutterResult) {
         connectIQ.showDeviceSelection()
         result(nil)
+    }
+
+    private func isSupported(_ result: FlutterResult) {
+        result(UIApplication.shared.canOpenURL(URL(string: "gcm-ciq://stub")!))
+    }
+
+    private func isPaired(_ result: FlutterResult) {
+        result(getCachedDevices().isEmpty == false)
+    }
+
+    private func isReachable(_ result: @escaping FlutterResult) {
+        Task { await isReachableAsync(result) }
+    }
+
+    private func isReachableAsync(_ result: FlutterResult) async {
+        let apps = createApps()
+        for app in apps {
+            let installed = await withCheckedContinuation { continuation in
+                connectIQ.getAppStatus(app) { status in
+                    continuation.resume(returning: status?.isInstalled == true)
+                }
+            }
+            if installed {
+                result(true)
+                return
+            }
+        }
+
+        result(false)
+    }
+
+    private func sendMessage(_ call: FlutterMethodCall, _ result: FlutterResult) {
+        guard applicationId != nil else {
+            result(FlutterError(code: "Not Initialized", message: nil, details: nil))
+            return
+        }
+
+        let apps = createApps()
+        var errors = [String]()
+        for app in apps {
+            connectIQ.sendMessage(call.arguments, to: app, progress: { _, _ in }) { result in
+                guard result != .success else {
+                    return
+                }
+                errors.append("\(result)")
+            }
+        }
+
+        if errors.isEmpty {
+            result(nil)
+        } else {
+            result(FlutterError(code: "Error sending message", message: errors.joined(separator: ", "), details: nil))
+        }
     }
 }
 

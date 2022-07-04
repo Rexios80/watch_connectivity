@@ -14,6 +14,17 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
     return channel.invokeMethod('initialize', options.toJson());
   }
 
+  /// Launches Garmin Connect Mobile for the purpose of retrieving a list of
+  /// ConnectIQ-compatible devices.
+  /// 
+  /// Devices the user gives permission to access are handled by the native code
+  /// and cached in UserDefaults
+  /// 
+  /// iOS only
+  Future<void> showDeviceSelection() {
+    return channel.invokeMethod('showDeviceSelection');
+  }
+
   /// If the Garmin Connect app is installed
   @override
   Future<bool> get isSupported => super.isSupported;
@@ -33,12 +44,4 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
   @override
   Future<void> updateApplicationContext(Map<String, dynamic> context) =>
       throw UnsupportedError('Unsupported by Garmin watches');
-
-  /// Launches Garmin Connect Mobile for the purpose of retrieving a list of
-  /// ConnectIQ-compatible devices.
-  /// 
-  /// iOS only
-  Future<void> showDeviceSelection() {
-    return channel.invokeMethod('showDeviceSelection');
-  }
 }

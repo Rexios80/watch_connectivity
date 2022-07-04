@@ -27,8 +27,8 @@ SPEC CHECKSUMS:
   ConnectIQ: 5c634f005164b57a5b5eadbaa0cce102377e45a8
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   watch_connectivity: 715eb484685e05846eab74795348a44bb2809b82
-  watch_connectivity_garmin: cc2971aad7a70f29130e2f9d54f4129d0e9c3aeb
+  watch_connectivity_garmin: 13ce5b37759f0211142f91084718a3aeacefc34c
 
-PODFILE CHECKSUM: 5fe6b944c71b01c99015e32bd095ae81fccc9047
+PODFILE CHECKSUM: 12d0df065ddae06d8e8bc23d6f4bc82db912c52b
 
 COCOAPODS: 1.11.3
