@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
 
     // Change this to the plugin you want to test.
     // e.g. `_watch = WatchConnectivityGarmin();`
-    _watch = WatchConnectivity();
+    _watch = WatchConnectivityGarmin();
 
     if (_watch is WatchConnectivityGarmin) {
       (_watch as WatchConnectivityGarmin).initialize(

@@ -33,7 +33,7 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
-  pod 'ConnectIQ', :podspec => 'ConnectIQ.podspec'
+  pod 'ConnectIQ', :git => 'https://github.com/Rexios80/ConnectIQ-pod', :tag => '0.1.0' # This might update with new plugin versions
 end
 
 post_install do |installer|

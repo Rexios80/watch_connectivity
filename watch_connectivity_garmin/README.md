@@ -14,7 +14,7 @@ platform :ios, '13.0'
 target 'Runner' do
   ...
 
-  pod 'ConnectIQ', :podspec => 'ConnectIQ.podspec'
+  pod 'ConnectIQ', :git => 'https://github.com/Rexios80/ConnectIQ-pod', :tag => '0.1.0' # This might update with new plugin versions
 end
 
 ...
