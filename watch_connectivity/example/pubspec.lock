@@ -178,7 +178,7 @@ packages:
     source: path
     version: "0.1.0"
   watch_connectivity_platform_interface:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "../../watch_connectivity_platform_interface"
       relative: true

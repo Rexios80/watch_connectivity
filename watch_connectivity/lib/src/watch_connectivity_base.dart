@@ -1,7 +1,7 @@
 import 'package:watch_connectivity_platform_interface/watch_connectivity_platform_interface.dart';
 
 /// Plugin to communicate with Apple Watch and WearOS devices
-class WatchConnectivity extends WatchConnectivityPlatformInterface {
+class WatchConnectivity extends WatchConnectivityBase {
   /// Constructor
   WatchConnectivity() : super(pluginName: 'watch_connectivity');
 

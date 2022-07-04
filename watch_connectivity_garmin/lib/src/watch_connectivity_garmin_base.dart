@@ -2,7 +2,7 @@ import 'package:watch_connectivity_garmin/watch_connectivity_garmin.dart';
 import 'package:watch_connectivity_platform_interface/watch_connectivity_platform_interface.dart';
 
 /// Plugin to communicate with Garmin watches
-class WatchConnectivityGarmin extends WatchConnectivityPlatformInterface {
+class WatchConnectivityGarmin extends WatchConnectivityBase {
   @override
   Stream<Map<String, dynamic>> get contextStream =>
       throw UnsupportedError('Unsupported by Garmin watches');

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:watch_connectivity/watch_connectivity.dart';
 import 'package:watch_connectivity_garmin/watch_connectivity_garmin.dart';
-import 'package:watch_connectivity_platform_interface/watch_connectivity_platform_interface.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +15,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late final WatchConnectivityPlatformInterface _watch;
+  late final WatchConnectivityBase _watch;
 
   var _count = 0;
 

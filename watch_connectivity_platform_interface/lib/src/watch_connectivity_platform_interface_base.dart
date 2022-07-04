@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// Interface to communicate with watch devices
-/// 
+///
 /// Implementations are provided separately for each watch platform
-abstract class WatchConnectivityPlatformInterface {
+abstract class WatchConnectivityBase {
   /// The channel for communicating with the plugin's native code
   @protected
   final MethodChannel channel;
@@ -24,9 +24,9 @@ abstract class WatchConnectivityPlatformInterface {
   Stream<Map<String, dynamic>> get contextStream =>
       _contextStreamController.stream;
 
-  /// Create an instance of [WatchConnectivityPlatformInterface] for the given
+  /// Create an instance of [WatchConnectivityBase] for the given
   /// [pluginName]
-  WatchConnectivityPlatformInterface({required String pluginName})
+  WatchConnectivityBase({required String pluginName})
       : channel = MethodChannel(pluginName) {
     channel.setMethodCallHandler(_handle);
   }
