@@ -4,12 +4,13 @@ A new Flutter plugin project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+<!-- TODO -->
+iOS podfile changes:
+```ruby
+pod 'ConnectIQ', :podspec => 'ConnectIQ.podspec'
+```
+```ruby
+installer.pods_project.build_configurations.each do |config|
+  config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+end
+```
