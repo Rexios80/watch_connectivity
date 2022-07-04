@@ -45,8 +45,11 @@ class _MyAppState extends State<MyApp> {
 
     _watch.messageStream
         .listen((e) => setState(() => _log.add('Received message: $e')));
-    _watch.contextStream
-        .listen((e) => setState(() => _log.add('Received context: $e')));
+
+    if (_watch is! WatchConnectivityGarmin) {
+      _watch.contextStream
+          .listen((e) => setState(() => _log.add('Received context: $e')));
+    }
 
     initPlatformState();
   }
