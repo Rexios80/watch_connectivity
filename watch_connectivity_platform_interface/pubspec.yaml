@@ -1,6 +1,6 @@
 name: watch_connectivity_platform_interface
 description: Platform interface for communicating with wearable watch devices
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/Rexios80/watch_connectivity/tree/master/watch_connectivity_platform_interface
 
 environment:

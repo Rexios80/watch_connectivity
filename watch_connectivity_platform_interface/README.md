@@ -2,7 +2,8 @@ Platform interface for communicating with wearable watch devices
 
 ## Plugins
 The following plugins implement this interface:
-|                                                                                 |                                           |
+
+| Plugin                                                                          | Description                               |
 | ------------------------------------------------------------------------------- | ----------------------------------------- |
 | [watch_connectivity](https://pub.dev/packages/watch_connectivity)               | Implementation for WearOS and Apple Watch |
 | [watch_connectivity_garmin](https://pub.dev/packages/watch_connectivity_garmin) | Implementation for Garmin watches         |
