@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 /// Interface to communicate with watch devices
 ///
 /// Implementations are provided separately for each watch platform
+/// 
+/// See implementation overrides for platform-specific documentation
 abstract class WatchConnectivityBase {
   /// The channel for communicating with the plugin's native code
   @protected
@@ -79,7 +81,7 @@ abstract class WatchConnectivityBase {
     return transformedContexts ?? [];
   }
 
-  /// Send a message to all connected nodes
+  /// Send a message to all connected watches
   Future<void> sendMessage(Map<String, dynamic> message) {
     return channel.invokeMethod('sendMessage', message);
   }

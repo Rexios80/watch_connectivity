@@ -1,5 +1,5 @@
 name: watch_connectivity_garmin
-description: Implementation of watch_connectivity for use with Garmin devices
+description: Wrapper for the ConnectIQ SDK to communicate with Garmin watches
 version: 0.1.0
 homepage: https://github.com/Rexios80/watch_connectivity
 

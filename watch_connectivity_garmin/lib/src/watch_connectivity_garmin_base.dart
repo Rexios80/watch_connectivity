@@ -15,10 +15,12 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
   }
 
   /// Launches Garmin Connect Mobile for the purpose of retrieving a list of
-  /// ConnectIQ-compatible devices.
+  /// ConnectIQ-compatible devices. Note that by launching GCM, this method
+  /// causes the companion app to go into the background, possibly resulting in
+  /// the app being suspended. The companion app should expect to be suspended
+  /// when calling this method.
   /// 
-  /// Devices the user gives permission to access are handled by the native code
-  /// and cached in UserDefaults
+  /// Returned devices are cached natively in UserDefaults
   /// 
   /// iOS only
   Future<void> showDeviceSelection() {
@@ -29,7 +31,7 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
   @override
   Future<bool> get isSupported => super.isSupported;
 
-  /// If the companion app is installed
+  /// If the companion app is installed on any accessible watches
   @override
   Future<bool> get isReachable => super.isReachable;
 

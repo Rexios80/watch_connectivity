@@ -1,4 +1,4 @@
-import 'package:watch_connectivity/src/watch_connectivity_base.dart';
+import 'package:watch_connectivity/watch_connectivity.dart';
 
 void example() {
   final watch = WatchConnectivity();

@@ -1,5 +1,5 @@
 name: watch_connectivity_platform_interface
-description: A new Flutter package project.
+description: Platform interface for communicating with wearable watch devices
 version: 0.1.0
 homepage: https://github.com/Rexios80/watch_connectivity
 
