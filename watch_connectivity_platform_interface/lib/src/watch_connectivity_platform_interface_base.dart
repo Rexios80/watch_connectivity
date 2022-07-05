@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 /// Interface to communicate with watch devices
 ///
 /// Implementations are provided separately for each watch platform
-/// 
+///
 /// See implementation overrides for platform-specific documentation
 abstract class WatchConnectivityBase {
   /// The channel for communicating with the plugin's native code

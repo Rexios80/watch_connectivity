@@ -19,9 +19,9 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
   /// causes the companion app to go into the background, possibly resulting in
   /// the app being suspended. The companion app should expect to be suspended
   /// when calling this method.
-  /// 
+  ///
   /// Returned devices are cached natively in UserDefaults
-  /// 
+  ///
   /// iOS only
   Future<void> showDeviceSelection() {
     return channel.invokeMethod('showDeviceSelection');
