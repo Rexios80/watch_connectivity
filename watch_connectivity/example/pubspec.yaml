@@ -26,5 +26,9 @@ dev_dependencies:
 
   rexios_lints: ^2.0.1
 
+dependency_overrides:
+  watch_connectivity_platform_interface:
+    path: ../../watch_connectivity_platform_interface
+
 flutter:
   uses-material-design: true
