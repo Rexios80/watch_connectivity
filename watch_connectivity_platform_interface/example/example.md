@@ -1,0 +1,1 @@
+See the [watch_connectivity example](https://pub.dev/packages/watch_connectivity/example)
