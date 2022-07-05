@@ -53,16 +53,16 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin, IQDevi
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        guard url.scheme == urlScheme, options[.sourceApplication] as? String == IQGCMBundle else {
+        guard url.scheme == urlScheme else {
             return false
         }
 
         let devices = connectIQ.parseDeviceSelectionResponse(from: url) as? [IQDevice]
         guard devices != nil else {
-            return true
+            return false
         }
 
-        defaults.set(devices!.map { $0.uuid }, forKey: Self.deviceIdsKey)
+        defaults.set(devices!.map { $0.uuid.uuidString }, forKey: Self.deviceIdsKey)
         registerForEvents()
 
         return true
@@ -169,6 +169,10 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin, IQDevi
         } else {
             result(FlutterError(code: "Error sending message", message: errors.joined(separator: ", "), details: nil))
         }
+    }
+    
+    public func deviceStatusChanged(_ device: IQDevice!, status: IQDeviceStatus) {
+        // Don't care
     }
     
     public func receivedMessage(_ message: Any!, from app: IQApp!) {
