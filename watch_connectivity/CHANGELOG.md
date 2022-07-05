@@ -1,5 +1,5 @@
 ## 0.1.3
-- `WatchConnectivity` now implements `WatchConnectivityBase`
+- `WatchConnectivity` now implements `WatchConnectivityBase` from `watch_connectivity_platform_interface`
 
 ## 0.1.2
 - Fixed build issue on Android
