@@ -29,6 +29,8 @@ end
 ```
 Info.plist changes:
 ```xml
+<key>CFBundleDisplayName</key>
+<string>${PRODUCT_NAME}</string>
 <key>CFBundleURLTypes</key>
 <array>
     <dict>
@@ -38,7 +40,7 @@ Info.plist changes:
         <string>{your.bundle.identifier}</string>
         <key>CFBundleURLSchemes</key>
         <array>
-            <string>{your_unique_string}</string>
+            <string>{your-unique-string}</string>
         </array>
     </dict>
 </array>
@@ -47,6 +49,8 @@ Info.plist changes:
     <string>gcm-ciq</string>
 </array>
 <key>NSBluetoothPeripheralUsageDescription</key>
+<string>Used to connect to wearable devices</string>
+<key>NSBluetoothAlwaysUsageDescription</key>
 <string>Used to connect to wearable devices</string>
 <key>UIBackgroundModes</key>
 <array>

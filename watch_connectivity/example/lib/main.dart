@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:watch_connectivity/watch_connectivity.dart';
@@ -38,7 +40,7 @@ class _MyAppState extends State<MyApp> {
       (_watch as WatchConnectivityGarmin).initialize(
         GarminInitializationOptions(
           applicationId: 'daed64bf-ecee-4b75-b736-f0f834801d6a',
-          urlScheme: 'watch_connectivity_example',
+          urlScheme: 'watch-connectivity-example',
         ),
       );
     }
@@ -88,6 +90,12 @@ class _MyAppState extends State<MyApp> {
                     onPressed: initPlatformState,
                     child: const Text('Refresh'),
                   ),
+                  if (_watch is WatchConnectivityGarmin && Platform.isIOS)
+                    TextButton(
+                      onPressed: (_watch as WatchConnectivityGarmin)
+                          .showDeviceSelection,
+                      child: const Text('Open device selection'),
+                    ),
                   const SizedBox(height: 8),
                   const Text('Send'),
                   Row(
