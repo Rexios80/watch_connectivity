@@ -24,7 +24,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  rexios_lints: ^2.0.1
+  rexios_lints: ^3.0.0
 
 dependency_overrides:
   watch_connectivity_platform_interface:
