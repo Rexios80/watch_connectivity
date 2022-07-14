@@ -176,7 +176,7 @@ packages:
       path: "../../watch_connectivity_garmin"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   watch_connectivity_platform_interface:
     dependency: "direct overridden"
     description:

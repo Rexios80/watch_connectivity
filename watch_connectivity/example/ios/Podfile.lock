@@ -8,7 +8,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - ConnectIQ (from `https://github.com/Rexios80/ConnectIQ-pod`, tag `0.1.0`)
+  - ConnectIQ (from `https://github.com/Rexios80/ConnectIQ-pod`, tag `0.2.0`)
   - Flutter (from `Flutter`)
   - watch_connectivity (from `.symlinks/plugins/watch_connectivity/ios`)
   - watch_connectivity_garmin (from `.symlinks/plugins/watch_connectivity_garmin/ios`)
@@ -16,7 +16,7 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   ConnectIQ:
     :git: https://github.com/Rexios80/ConnectIQ-pod
-    :tag: 0.1.0
+    :tag: 0.2.0
   Flutter:
     :path: Flutter
   watch_connectivity:
@@ -27,14 +27,14 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   ConnectIQ:
     :git: https://github.com/Rexios80/ConnectIQ-pod
-    :tag: 0.1.0
+    :tag: 0.2.0
 
 SPEC CHECKSUMS:
-  ConnectIQ: 5c634f005164b57a5b5eadbaa0cce102377e45a8
+  ConnectIQ: 7cc6b7a381ce43d7024684c1ff18696fe1f9affe
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   watch_connectivity: 715eb484685e05846eab74795348a44bb2809b82
   watch_connectivity_garmin: 13ce5b37759f0211142f91084718a3aeacefc34c
 
-PODFILE CHECKSUM: e10c6ad139918b950949154f86994c6f210ccbfe
+PODFILE CHECKSUM: c150008657800dd386cf6899db1dc714ebd2104c
 
 COCOAPODS: 1.11.3

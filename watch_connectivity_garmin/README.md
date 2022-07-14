@@ -11,17 +11,7 @@ platform :ios, '13.0'
 target 'Runner' do
   ...
 
-  pod 'ConnectIQ', :git => 'https://github.com/Rexios80/ConnectIQ-pod', :tag => '0.1.0'
-end
-
-...
-
-post_install do |installer|
-  ...
-
-  installer.pods_project.build_configurations.each do |config|
-    config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-  end
+  pod 'ConnectIQ', :git => 'https://github.com/Rexios80/ConnectIQ-pod', :tag => '0.2.0'
 end
 ```
 
