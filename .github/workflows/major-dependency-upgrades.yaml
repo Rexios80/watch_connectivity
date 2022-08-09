@@ -27,7 +27,7 @@ jobs:
         run: dart pub global activate puby
 
       - name: Upgrade dependencies
-        run: puby upgrade --major-versions && puby upgrade
+        run: puby upgrade --major-versions
       
       - name: Check pubspec diff
         id: pubspec_check
