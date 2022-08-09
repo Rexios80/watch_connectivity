@@ -1,0 +1,46 @@
+name: Major Dependency Upgrades
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  upgrade-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          cache: true
+
+      - name: Pub cache
+        uses: actions/cache@v3
+        env:
+          cache-name: pub-cache
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: ${{ env.cache-name }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ env.cache-name }}-
+
+      - name: Activate puby
+        run: dart pub global activate puby
+
+      - name: Upgrade dependencies
+        run: puby upgrade --major-versions && puby upgrade
+      
+      - name: Check pubspec diff
+        id: pubspec_check
+        run: |
+          if [[ `git status --porcelain **\pubspec.yaml` ]]; then
+            echo "::set-output name=changed::true"
+          fi
+
+      - name: Create Pull Request
+        if: steps.pubspec_check.outputs.changed
+        uses: peter-evans/create-pull-request@v4
+        with:
+          branch: dependencies/major-upgrades
+          commit-message: "Upgraded dependency major versions"
+          title: "[CI] Major Dependency Upgrades"
+          body: "Upgraded dependency major versions"
