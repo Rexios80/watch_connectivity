@@ -14,4 +14,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  rexios_lints: ^3.0.0
+  rexios_lints: ^4.0.0
