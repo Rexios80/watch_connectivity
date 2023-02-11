@@ -20,6 +20,12 @@ Other features:
 - Tell if the counterpart is reachable
   - On Android it is not possible to tell if the counterpart app is reachable. This plugin checks if any nodes are connected.
 
+## Requirements
+
+On Android, the watch and phone apps must:
+- Have the same package name
+- Be signed with the same key
+
 ## Usage
 
 <!-- embedme readme/usage.dart -->

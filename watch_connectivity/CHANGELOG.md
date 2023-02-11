@@ -1,3 +1,6 @@
+## 0.1.4+1
+- Documentation updates
+
 ## 0.1.4
 - Fixes Android build issue
 
