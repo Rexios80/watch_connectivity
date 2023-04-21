@@ -73,9 +73,12 @@ abstract class WatchConnectivityBase {
 
   /// A dictionary containing the last update data received
   Future<List<Map<String, dynamic>>> get receivedApplicationContexts async {
-    final receivedApplicationContexts = await channel
-        .invokeListMethod<Map<String, dynamic>>('receivedApplicationContexts');
-    return receivedApplicationContexts ?? [];
+    final receivedApplicationContexts =
+        await channel.invokeListMethod<Map>('receivedApplicationContexts');
+    return receivedApplicationContexts
+            ?.map((e) => e.cast<String, dynamic>())
+            .toList() ??
+        [];
   }
 
   /// Send a message to all connected watches
