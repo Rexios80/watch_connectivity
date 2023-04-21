@@ -17,9 +17,6 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
 
-  watch_connectivity_garmin:
-    path: ../../watch_connectivity_garmin
-
   is_wear: ^0.0.1+1
   wear:
     git:
