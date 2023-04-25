@@ -1,3 +1,6 @@
+## 0.1.2
+- Adds `startWatchApp` method
+
 ## 0.1.1
 - Fixed readme
 

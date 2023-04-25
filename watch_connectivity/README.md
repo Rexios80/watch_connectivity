@@ -19,6 +19,7 @@ Other features:
   - On Android it is not possible to check if a watch is paired. This plugin checks if either the Wear OS or Galaxy Wearable apps are installed.
 - Tell if the counterpart is reachable
   - On Android it is not possible to tell if the counterpart app is reachable. This plugin checks if any nodes are connected.
+- Start an Apple Watch app from the phone app
 
 ## Requirements
 

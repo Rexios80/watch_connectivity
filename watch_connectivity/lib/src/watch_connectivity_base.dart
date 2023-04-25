@@ -23,4 +23,12 @@ class WatchConnectivity extends WatchConnectivityBase {
   @override
   Future<List<Map<String, dynamic>>> get receivedApplicationContexts =>
       super.receivedApplicationContexts;
+  
+
+  /// Apple Watch: Start the watch app with a workout session. Currently there
+  /// is no way to configure the session from the phone side.
+  /// 
+  /// WearOS: Does nothing
+  @override
+  Future<void> startWatchApp() => super.startWatchApp();
 }
