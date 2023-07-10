@@ -4,7 +4,7 @@ version: 0.1.6
 homepage: https://github.com/Rexios80/watch_connectivity/tree/master/watch_connectivity
 
 environment:
-  sdk: ">=2.15.1 <3.0.0"
+  sdk: ">=2.15.1 <4.0.0"
   flutter: ">=2.5.0"
 
 dependencies:
