@@ -1,4 +1,4 @@
-group 'com.example.watch_connectivity_garmin'
+group 'dev.rexios.watch_connectivity_garmin'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -56,6 +56,7 @@ android {
     defaultConfig {
         minSdkVersion 21
     }
+    namespace "dev.rexios.watch_connectivity_garmin"
 }
 
 dependencies {

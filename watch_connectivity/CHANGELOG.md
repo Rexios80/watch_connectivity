@@ -1,3 +1,6 @@
+## 0.1.6
+- Adds namespace to `build.gradle` to support Gradle 8
+
 ## 0.1.5
 - Documentation updates
 

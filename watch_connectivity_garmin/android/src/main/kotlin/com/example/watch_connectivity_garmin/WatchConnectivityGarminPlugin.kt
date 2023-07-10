@@ -1,4 +1,4 @@
-package com.example.watch_connectivity_garmin
+package dev.rexios.watch_connectivity_garmin
 
 import android.content.Context
 import android.content.pm.PackageManager
