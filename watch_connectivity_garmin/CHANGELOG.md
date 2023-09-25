@@ -1,3 +1,6 @@
+## 0.1.4
+- Fix folder structure
+
 ## 0.1.3
 - Adds namespace to `build.gradle` to support Gradle 8
 - Changes Android package name from `com.example...` to `dev.rexios...`
