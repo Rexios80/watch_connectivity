@@ -13,9 +13,16 @@ A new Flutter plugin project.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
-  s.dependency 'Flutter'
-  s.dependency 'ConnectIQ'
+  s.subspec 'WatchConnectivityGarmin' do |ss|
+    ss.source_files = 'Classes/**/*'
+    ss.dependency 'Flutter'
+    ss.dependency 'watch_connectivity_garmin/ConnectIQ'
+  end
+  s.subspec 'ConnectIQ' do |ss|
+    ss.source_files     =  "ConnectIQ.xcframework"
+    ss.vendored_frameworks = "ConnectIQ.xcframework"
+  end
+
   s.platform = :ios, '13.0'
 
   # Flutter.framework does not contain a i386 slice.
