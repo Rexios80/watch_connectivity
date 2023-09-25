@@ -1,18 +1,14 @@
 A wrapper for the ConnectIQ SDK to communicate with Garmin watches
 
+## NOTE
+
+By using this plugin, you accept the [ConnectIQ license agreement](https://developer.garmin.com/connect-iq/sdk/).
+
 ## Getting Started
 
 iOS podfile changes:
 ```ruby
 platform :ios, '13.0'
-
-...
-
-target 'Runner' do
-  ...
-
-  pod 'ConnectIQ', :git => 'https://github.com/Rexios80/ConnectIQ-pod', :tag => '0.2.0'
-end
 ```
 
 iOS Info.plist changes:
