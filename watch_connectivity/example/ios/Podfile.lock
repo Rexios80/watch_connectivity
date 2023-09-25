@@ -1,39 +1,39 @@
 PODS:
-  - ConnectIQ (1.5)
   - Flutter (1.0.0)
   - is_wear (0.0.1):
     - Flutter
   - watch_connectivity (0.0.1):
     - Flutter
+  - watch_connectivity_garmin (0.0.1):
+    - watch_connectivity_garmin/ConnectIQ (= 0.0.1)
+    - watch_connectivity_garmin/WatchConnectivityGarmin (= 0.0.1)
+  - watch_connectivity_garmin/ConnectIQ (0.0.1)
+  - watch_connectivity_garmin/WatchConnectivityGarmin (0.0.1):
+    - Flutter
+    - watch_connectivity_garmin/ConnectIQ
 
 DEPENDENCIES:
-  - ConnectIQ (from `https://github.com/Rexios80/ConnectIQ-pod`, tag `0.2.0`)
   - Flutter (from `Flutter`)
   - is_wear (from `.symlinks/plugins/is_wear/ios`)
   - watch_connectivity (from `.symlinks/plugins/watch_connectivity/ios`)
+  - watch_connectivity_garmin (from `.symlinks/plugins/watch_connectivity_garmin/ios`)
 
 EXTERNAL SOURCES:
-  ConnectIQ:
-    :git: https://github.com/Rexios80/ConnectIQ-pod
-    :tag: 0.2.0
   Flutter:
     :path: Flutter
   is_wear:
     :path: ".symlinks/plugins/is_wear/ios"
   watch_connectivity:
     :path: ".symlinks/plugins/watch_connectivity/ios"
-
-CHECKOUT OPTIONS:
-  ConnectIQ:
-    :git: https://github.com/Rexios80/ConnectIQ-pod
-    :tag: 0.2.0
+  watch_connectivity_garmin:
+    :path: ".symlinks/plugins/watch_connectivity_garmin/ios"
 
 SPEC CHECKSUMS:
-  ConnectIQ: 7cc6b7a381ce43d7024684c1ff18696fe1f9affe
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   is_wear: d4928a5ce8b07101a322ed3e1f71d8232779ce0c
   watch_connectivity: 715eb484685e05846eab74795348a44bb2809b82
+  watch_connectivity_garmin: 9d05ad35f45fe9c6c2cfc2a4c214c4bea9dd57e1
 
-PODFILE CHECKSUM: c150008657800dd386cf6899db1dc714ebd2104c
+PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.13.0
