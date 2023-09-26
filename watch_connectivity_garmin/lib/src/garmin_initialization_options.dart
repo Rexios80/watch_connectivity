@@ -1,3 +1,5 @@
+import 'package:watch_connectivity_garmin/src/garmin_iq_connect_type.dart';
+
 /// Initialization options for the Garmin SDK
 class GarminInitializationOptions {
   /// The id of the companion application to communicate with
@@ -9,15 +11,19 @@ class GarminInitializationOptions {
   /// Show UI to help the user resolve issues with Garmin Connect
   final bool autoUI;
 
-  /// Tethering mode is set for connectivity with Garmin Connect.
-  final bool tethered;
+  /// IQConnectType for connection type
+  final GarminIQConnectType connectType;
+
+  /// ADB Port for connection in tethered mode
+  final int adbPort;
 
   /// Constructor
   GarminInitializationOptions({
     required this.applicationId,
     required this.urlScheme,
     this.autoUI = false,
-    this.tethered = false,
+    this.connectType = GarminIQConnectType.wireless,
+    this.adbPort = 7381,
   });
 
   /// Convert to JSON
@@ -25,6 +31,7 @@ class GarminInitializationOptions {
         'applicationId': applicationId,
         'urlScheme': urlScheme,
         'autoUI': autoUI,
-        'tethered': tethered,
+        'connectType': connectType,
+        'adbPort': adbPort,
       };
 }

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import com.garmin.android.connectiq.ConnectIQ
 import com.garmin.android.connectiq.ConnectIQ.ConnectIQListener
 import com.garmin.android.connectiq.ConnectIQ.IQApplicationInfoListener
+import com.garmin.android.connectiq.ConnectIQ.IQConnectType
 import com.garmin.android.connectiq.ConnectIQ.IQSdkErrorStatus
 import com.garmin.android.connectiq.IQApp
 import com.garmin.android.connectiq.IQDevice
@@ -63,9 +64,7 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
         val applicationId = call.argument<String>("applicationId")!!
         iqApp = IQApp(applicationId)
 
-        val isTethered = call.argument<Boolean>("tethered")!!
-        var connectType = ConnectIQ.IQConnectType.WIRELESS
-        if (isTethered) connectType = ConnectIQ.IQConnectType.TETHERED
+        val connectType = call.argument<IQConnectType>("connectType")!!
         connectIQ = ConnectIQ.getInstance(context, connectType)
         connectIQ.initialize(
             context,
@@ -83,6 +82,11 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
                 override fun onSdkShutDown() {}
             },
         )
+
+        if (connectType == IQConnectType.TETHERED) {
+            val adbPort = call.argument<Int>("adbPort")!!
+            connectIQ.adbPort = adbPort
+        }
     }
 
     private fun listenForMessages() {
