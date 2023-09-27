@@ -31,7 +31,7 @@ class GarminInitializationOptions {
         'applicationId': applicationId,
         'urlScheme': urlScheme,
         'autoUI': autoUI,
-        'connectType': connectType,
+        'connectType': connectType.name,
         'adbPort': adbPort,
       };
 }
