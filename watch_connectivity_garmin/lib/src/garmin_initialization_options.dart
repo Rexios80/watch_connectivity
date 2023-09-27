@@ -1,5 +1,3 @@
-import 'package:watch_connectivity_garmin/src/garmin_iq_connect_type.dart';
-
 /// Initialization options for the Garmin SDK
 class GarminInitializationOptions {
   /// The id of the companion application to communicate with
@@ -12,7 +10,7 @@ class GarminInitializationOptions {
   final bool autoUI;
 
   /// IQConnectType for connection type.  Android Only
-  final GarminIQConnectType connectType;
+  final GarminIqConnectionType connectType;
 
   /// ADB Port for connection in tethered mode.  Android Only
   final int adbPort;
@@ -22,7 +20,7 @@ class GarminInitializationOptions {
     required this.applicationId,
     required this.urlScheme,
     this.autoUI = false,
-    this.connectType = GarminIQConnectType.wireless,
+    this.connectType = GarminIqConnectionType.wireless,
     this.adbPort = 7381,
   });
 
@@ -34,4 +32,13 @@ class GarminInitializationOptions {
         'connectType': connectType.name,
         'adbPort': adbPort,
       };
+}
+
+/// Enum for type of Garmin connection to establish
+enum GarminIqConnectionType {
+  /// Tethered connection
+  tethered,
+
+  /// Wireless connection
+  wireless;
 }
