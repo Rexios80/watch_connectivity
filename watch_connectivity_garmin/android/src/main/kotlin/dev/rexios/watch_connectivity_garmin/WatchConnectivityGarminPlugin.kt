@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import com.garmin.android.connectiq.ConnectIQ
 import com.garmin.android.connectiq.ConnectIQ.ConnectIQListener
 import com.garmin.android.connectiq.ConnectIQ.IQApplicationInfoListener
+import com.garmin.android.connectiq.ConnectIQ.IQConnectType
 import com.garmin.android.connectiq.ConnectIQ.IQSdkErrorStatus
 import com.garmin.android.connectiq.IQApp
 import com.garmin.android.connectiq.IQDevice
@@ -36,7 +37,6 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
         context = flutterPluginBinding.applicationContext
 
         packageManager = context.packageManager
-        connectIQ = ConnectIQ.getInstance(context, ConnectIQ.IQConnectType.WIRELESS)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -64,6 +64,9 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
         val applicationId = call.argument<String>("applicationId")!!
         iqApp = IQApp(applicationId)
 
+        val connectTypeString = call.argument<String>("connectType")!!
+        val connectType = IQConnectType.valueOf(connectTypeString)
+        connectIQ = ConnectIQ.getInstance(context, connectType)
         connectIQ.initialize(
             context,
             call.argument<Boolean>("autoUI")!!,
@@ -80,6 +83,11 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
                 override fun onSdkShutDown() {}
             },
         )
+
+        if (connectType == IQConnectType.TETHERED) {
+            val adbPort = call.argument<Int>("adbPort")!!
+            connectIQ.adbPort = adbPort
+        }
     }
 
     private fun listenForMessages() {
