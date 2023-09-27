@@ -1,3 +1,5 @@
+import 'package:recase/recase.dart';
+
 /// Initialization options for the Garmin SDK
 class GarminInitializationOptions {
   /// The id of the companion application to communicate with
@@ -29,7 +31,7 @@ class GarminInitializationOptions {
         'applicationId': applicationId,
         'urlScheme': urlScheme,
         'autoUI': autoUI,
-        'connectType': connectType.name,
+        'connectType': connectType.name.constantCase,
         'adbPort': adbPort,
       };
 }
