@@ -11,10 +11,14 @@ class GarminInitializationOptions {
   /// Show UI to help the user resolve issues with Garmin Connect
   final bool autoUI;
 
-  /// IQConnectType for connection type.  Android Only
+  /// IQConnectType for connection type
+  ///
+  /// Android only
   final GarminIqConnectionType connectType;
 
-  /// ADB Port for connection in tethered mode.  Android Only
+  /// ADB Port for connection in tethered mode
+  ///
+  /// Android only
   final int adbPort;
 
   /// Constructor
