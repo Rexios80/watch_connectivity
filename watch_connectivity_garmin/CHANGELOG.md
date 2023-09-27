@@ -1,6 +1,7 @@
 ## 0.1.5
 - Updates ConnectIQ to version 2.0.3
-- The `ConnectIQ` pod no longer needs to be manually added to the `Podspec`
+- The ConnectIQ pod no longer needs to be manually added to the Podspec
+- Adds `connectType` and `adbPort` parameters to the `initialize` method to allow using the Garmin emulator
 
 ## 0.1.4
 - Fix folder structure
