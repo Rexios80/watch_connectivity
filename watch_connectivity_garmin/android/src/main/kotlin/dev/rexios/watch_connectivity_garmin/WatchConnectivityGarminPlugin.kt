@@ -64,7 +64,8 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
         val applicationId = call.argument<String>("applicationId")!!
         iqApp = IQApp(applicationId)
 
-        val connectType = call.argument<IQConnectType>("connectType")!!
+        val connectTypeInt = call.argument<Int>("connectType")!!
+        val connectType = IQConnectType.values()[connectTypeInt];
         connectIQ = ConnectIQ.getInstance(context, connectType)
         connectIQ.initialize(
             context,
