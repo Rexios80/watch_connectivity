@@ -16,12 +16,10 @@ jobs:
 
       - name: Pub cache
         uses: actions/cache@v3
-        env:
-          cache-name: pub-cache
         with:
           path: ${{ env.PUB_CACHE }}
-          key: ${{ env.cache-name }}-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: ${{ env.cache-name }}-
+          key: pub-cache-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: pub-cache-
 
       - name: Activate puby
         run: dart pub global activate puby

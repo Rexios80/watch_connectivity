@@ -12,10 +12,29 @@ concurrency:
 jobs:
   static-analysis:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project:
+          [
+            "watch_connectivity",
+            "watch_connectivity_garmin",
+            "watch_connectivity_platform_interface",
+          ]
+    defaults:
+      run:
+        working-directory: ${{ matrix.project }}
 
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
+        with:
+          cache: true
+      - name: Pub cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: pub-cache-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: pub-cache-
       - name: Pub get
         run: flutter pub get
       - name: Format
