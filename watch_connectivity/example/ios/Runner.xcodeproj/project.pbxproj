@@ -12,6 +12,7 @@
 		0DE6F6B92AE02BCE0090E760 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0DE6F6B82AE02BCE0090E760 /* Assets.xcassets */; };
 		0DE6F6BC2AE02BCE0090E760 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0DE6F6BB2AE02BCE0090E760 /* Preview Assets.xcassets */; };
 		0DE6F6BF2AE02BCE0090E760 /* Example Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 0DE6F6B22AE02BCD0090E760 /* Example Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0DE6F6C52AE02BF70090E760 /* WatchSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DE6F6C42AE02BF70090E760 /* WatchSessionDelegate.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		6C7EF2CE4C244D2658DB0F0B /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 965C660EB0714E1460675028 /* Pods_Runner.framework */; };
@@ -62,6 +63,7 @@
 		0DE6F6B62AE02BCD0090E760 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0DE6F6B82AE02BCE0090E760 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0DE6F6BB2AE02BCE0090E760 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		0DE6F6C42AE02BF70090E760 /* WatchSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionDelegate.swift; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 			children = (
 				0DE6F6B42AE02BCD0090E760 /* ExampleApp.swift */,
 				0DE6F6B62AE02BCD0090E760 /* ContentView.swift */,
+				0DE6F6C42AE02BF70090E760 /* WatchSessionDelegate.swift */,
 				0DE6F6B82AE02BCE0090E760 /* Assets.xcassets */,
 				0DE6F6BA2AE02BCE0090E760 /* Preview Content */,
 			);
@@ -368,6 +371,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0DE6F6B72AE02BCD0090E760 /* ContentView.swift in Sources */,
+				0DE6F6C52AE02BF70090E760 /* WatchSessionDelegate.swift in Sources */,
 				0DE6F6B52AE02BCD0090E760 /* ExampleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
