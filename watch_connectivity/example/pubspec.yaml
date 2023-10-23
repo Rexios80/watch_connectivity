@@ -22,8 +22,12 @@ dependencies:
   is_wear: ^0.0.1+1
   wear:
     git:
+      prs:
+        - https://github.com/fluttercommunity/flutter_wear_plugin/pull/19
+        - https://github.com/fluttercommunity/flutter_wear_plugin/pull/22
+        - https://github.com/fluttercommunity/flutter_wear_plugin/pull/24
       url: https://github.com/Rexios80/flutter_wear_plugin.git
-      ref: c5ca3ce5faf134602e93c1792f1fb0f8a8919465
+      ref: 473262879853259129e0a1d7431ce2e024746d58
 
 dev_dependencies:
   flutter_test:
