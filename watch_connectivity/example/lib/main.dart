@@ -103,11 +103,6 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                TextButton(
-                  onPressed: _watch.startWatchApp,
-                  child: const Text('Start watch app'),
-                ),
-                const SizedBox(width: 16),
                 const Text('Log'),
                 ..._log.reversed.map(Text.new),
               ],

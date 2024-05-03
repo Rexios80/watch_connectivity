@@ -1,3 +1,6 @@
+## 0.2.0
+- BREAKING: Removes `startWatchApp` method due to the dependency on `HealthKit` causing issues with app review
+
 ## 0.1.2
 - Adds `startWatchApp` method
 
