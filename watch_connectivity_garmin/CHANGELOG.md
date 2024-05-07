@@ -1,3 +1,6 @@
+## 0.1.6
+- Upgrades `watch_connectivity_platform_interface`
+
 ## 0.1.5
 - Updates ConnectIQ to version 2.0.3
 - The ConnectIQ pod no longer needs to be manually added to the Podspec
