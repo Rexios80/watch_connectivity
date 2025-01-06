@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:is_wear/is_wear.dart';
 
 import 'package:watch_connectivity/watch_connectivity.dart';
-import 'package:wear/wear.dart';
+import 'package:wear_plus/wear_plus.dart';
 
 late final bool isWear;
 

@@ -511,15 +511,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
-  wear:
+  wear_plus:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "473262879853259129e0a1d7431ce2e024746d58"
-      resolved-ref: "473262879853259129e0a1d7431ce2e024746d58"
-      url: "https://github.com/Rexios80/flutter_wear_plugin.git"
-    source: git
-    version: "1.1.0"
+      name: wear_plus
+      sha256: "1a21afed80b7cd4b6f353229a92a9664330d15a17114ff5e20578f093b491203"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   yaml:
     dependency: transitive
     description:
