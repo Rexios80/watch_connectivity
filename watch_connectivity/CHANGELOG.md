@@ -2,6 +2,7 @@
 
 - Fixes resource linking issue caused by too low compile SDK
 - Updates `play-services-wearable` to version `19.0.0`
+- Invokes iOS platform channel methods on main thread
 
 ## 0.2.0
 
