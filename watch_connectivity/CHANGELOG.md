@@ -1,3 +1,7 @@
+## NEXT
+
+- Updates README
+
 ## 0.2.1
 
 - Fixes resource linking issue caused by too low compile SDK
@@ -7,6 +11,7 @@
 ## 0.2.0
 
 - BREAKING: Removes `startWatchApp` method due to the dependency on `HealthKit` causing issues with app review
+- The `startWatchApp` functionality has been moved to the `workout` plugin
 
 ## 0.1.6
 
