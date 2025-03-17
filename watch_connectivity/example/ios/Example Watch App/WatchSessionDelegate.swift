@@ -24,9 +24,11 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     }
     
     func refresh() {
-        reachable = session.isReachable
-        context = session.applicationContext
-        receivedContext = session.receivedApplicationContext
+      DispatchQueue.main.async {
+        self.reachable = self.session.isReachable
+        self.context = self.session.applicationContext
+        self.receivedContext = self.session.receivedApplicationContext
+      }
     }
     
     func sendMessage(_ message: [String: Any]) {

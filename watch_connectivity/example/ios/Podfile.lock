@@ -30,9 +30,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  is_wear: d4928a5ce8b07101a322ed3e1f71d8232779ce0c
-  watch_connectivity: 715eb484685e05846eab74795348a44bb2809b82
-  watch_connectivity_garmin: 9d05ad35f45fe9c6c2cfc2a4c214c4bea9dd57e1
+  is_wear: 412a0e4db0c1506d6151a73282a1d011aefc75d3
+  watch_connectivity: 88e5bea25b473e66ef8d3f960954d154ed0356d6
+  watch_connectivity_garmin: 7e909cda93bdb876494dfb0b87f609e75dba7f1f
 
 PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
 
