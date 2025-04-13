@@ -1,3 +1,6 @@
+## 0.1.7
+- added a basic example for how to run `watch_connectivity_garmin` and included `proguard` rules for creating a working release build for android devices
+
 ## 0.1.6
 - Upgrades `watch_connectivity_platform_interface`
 

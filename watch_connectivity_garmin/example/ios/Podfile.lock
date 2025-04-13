@@ -1,0 +1,39 @@
+PODS:
+  - Flutter (1.0.0)
+  - is_wear (0.0.1):
+    - Flutter
+  - watch_connectivity (0.0.1):
+    - Flutter
+  - watch_connectivity_garmin (0.0.1):
+    - watch_connectivity_garmin/ConnectIQ (= 0.0.1)
+    - watch_connectivity_garmin/WatchConnectivityGarmin (= 0.0.1)
+  - watch_connectivity_garmin/ConnectIQ (0.0.1)
+  - watch_connectivity_garmin/WatchConnectivityGarmin (0.0.1):
+    - Flutter
+    - watch_connectivity_garmin/ConnectIQ
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - is_wear (from `.symlinks/plugins/is_wear/ios`)
+  - watch_connectivity (from `.symlinks/plugins/watch_connectivity/ios`)
+  - watch_connectivity_garmin (from `.symlinks/plugins/watch_connectivity_garmin/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  is_wear:
+    :path: ".symlinks/plugins/is_wear/ios"
+  watch_connectivity:
+    :path: ".symlinks/plugins/watch_connectivity/ios"
+  watch_connectivity_garmin:
+    :path: ".symlinks/plugins/watch_connectivity_garmin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  is_wear: 412a0e4db0c1506d6151a73282a1d011aefc75d3
+  watch_connectivity: 88e5bea25b473e66ef8d3f960954d154ed0356d6
+  watch_connectivity_garmin: 7e909cda93bdb876494dfb0b87f609e75dba7f1f
+
+PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
+
+COCOAPODS: 1.16.2

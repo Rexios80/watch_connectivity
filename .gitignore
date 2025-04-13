@@ -1,2 +1,7 @@
 # macOS
 .DS_Store
+/watch_connectivity_garmin/example/android/.gradle
+/watch_connectivity_garmin/example/android/app/.cxx
+watch_connectivity_garmin/example/android/local.properties
+watch_connectivity_garmin/example/.flutter-plugins
+watch_connectivity_garmin/example/.flutter-plugins-dependencies

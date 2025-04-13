@@ -1,0 +1,18 @@
+## Flutter wrapper
+-keepattributes Signature
+-keepattributes LineNumberTable,SourceFile
+-renamesourcefileattribute SourceFile
+-keep class io.flutter.app.** { *; }
+-keep class io.flutter.plugin.**  { *; }
+-keep class io.flutter.util.**  { *; }
+-keep class io.flutter.view.**  { *; }
+-keep class io.flutter.**  { *; }
+-keep class io.flutter.plugins.**  { *; }
+-dontwarn io.flutter.embedding.**
+-keep class com.google.firebase.** { *; }
+-keep class com.garmin.** { *; }
+-keep class com.garmin.android.connectiq.** { *; }
+-keep class com.garmin.android.apps.connectmobile.** { *; }
+-keepattributes JavascriptInterface
+-keepattributes Annotation
+-optimizations !method/inlining
