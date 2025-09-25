@@ -61,7 +61,9 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
     
   public func sessionDidBecomeInactive(_ session: WCSession) {}
     
-  public func sessionDidDeactivate(_ session: WCSession) {}
+  public func sessionDidDeactivate(_ session: WCSession) {
+    session.activate()
+  }
     
   public func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
     DispatchQueue.main.async {
