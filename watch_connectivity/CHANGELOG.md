@@ -1,3 +1,7 @@
+## 0.2.2
+
+- Reactivate the `WatchConnectivity` session in `sessionDidDeactivate` (by [@yoneryota](https://github.com/yoneryota) in [#32](https://github.com/Rexios80/watch_connectivity/pull/32))
+
 ## 0.2.1+1
 
 - Updates README

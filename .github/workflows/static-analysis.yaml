@@ -15,11 +15,9 @@ jobs:
     strategy:
       matrix:
         project:
-          [
-            "watch_connectivity",
-            "watch_connectivity_garmin",
-            "watch_connectivity_platform_interface",
-          ]
+          - watch_connectivity
+          - watch_connectivity_garmin
+          - watch_connectivity_platform_interface
     defaults:
       run:
         working-directory: ${{ matrix.project }}
