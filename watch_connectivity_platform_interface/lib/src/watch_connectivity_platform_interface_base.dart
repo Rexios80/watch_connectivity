@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +18,8 @@ abstract class WatchConnectivityBase {
       StreamController<Map<String, dynamic>>.broadcast();
   final _contextStreamController =
       StreamController<Map<String, dynamic>>.broadcast();
+  final _transferFileStreamController =
+      StreamController<Map<String, dynamic>>.broadcast();
 
   /// Stream of messages received
   Stream<Map<String, dynamic>> get messageStream =>
@@ -25,6 +28,16 @@ abstract class WatchConnectivityBase {
   /// Stream of contexts received
   Stream<Map<String, dynamic>> get contextStream =>
       _contextStreamController.stream;
+
+  /// Stream of transfer files received
+  Stream<Map<String, dynamic>> get transferFileStream {
+    // TODO: Implement for Android
+    if (Platform.isIOS) {
+      return _transferFileStreamController.stream;
+    } else {
+      throw UnsupportedError('Unsupported by Android');
+    }
+  }
 
   /// Create an instance of [WatchConnectivityBase] for the given
   /// [pluginName]
@@ -40,6 +53,13 @@ abstract class WatchConnectivityBase {
         break;
       case 'didReceiveApplicationContext':
         _contextStreamController.add(Map<String, dynamic>.from(call.arguments));
+        break;
+      case 'didReceiveTransferFile':
+        // TODO: Implement for Android
+        if (Platform.isIOS) {
+          _transferFileStreamController
+              .add(Map<String, dynamic>.from(call.arguments));
+        }
         break;
       default:
         throw UnimplementedError('${call.method} not implemented');
