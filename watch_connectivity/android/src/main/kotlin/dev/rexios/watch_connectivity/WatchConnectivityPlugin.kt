@@ -88,7 +88,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     private fun isPaired(result: Result) {
         val apps = packageManager.getInstalledApplications(0)
         val wearableAppInstalled =
-            apps.any { it.packageName == "com.google.android.wearable.app" || it.packageName == "com.samsung.android.app.watchmanager" }
+            apps.any { it.packageName == "com.google.android.wearable.app" || it.packageName == "com.google.android.apps.wear.companion" || it.packageName == "com.samsung.android.app.watchmanager" }
         result.success(wearableAppInstalled)
     }
 
