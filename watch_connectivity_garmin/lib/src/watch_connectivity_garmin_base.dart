@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:watch_connectivity_garmin/watch_connectivity_garmin.dart';
 
 /// Plugin to communicate with Garmin watches
@@ -7,8 +8,10 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
       throw UnsupportedError('Unsupported by Garmin watches');
 
   /// Constructor
-  WatchConnectivityGarmin() : super(pluginName: 'watch_connectivity_garmin');
-
+  WatchConnectivityGarmin() : super(pluginName: 'watch_connectivity_garmin') {
+    // Override the default method call handler with Garmin-specific one
+    channel.setMethodCallHandler(_handleGarmin);
+  }
   /// Initialize the platform SDK
   Future<void> initialize(GarminInitializationOptions options) {
     return channel.invokeMethod('initialize', options.toJson());
@@ -46,4 +49,24 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
   @override
   Future<void> updateApplicationContext(Map<String, dynamic> context) =>
       throw UnsupportedError('Unsupported by Garmin watches');
+
+
+
+  Future<void> _handleGarmin(MethodCall call) async {
+    switch (call.method) {
+      case 'didReceiveMessage':
+        final myArg = call.arguments as String;
+        final message = {'data': myArg};
+        messageStreamController.add(message);
+        break;
+      default:
+      // Optionally call super's handler logic, if you refactor it to be protected or public
+        throw UnimplementedError('Method ${call.method} not implemented for Garmin');
+    }
+  }
+
+  /// Send a message to all connected watches
+  Future<void> sendMessage(Map<String, dynamic> message) {
+    return channel.invokeMethod('sendMessage', message);
+  }
 }
