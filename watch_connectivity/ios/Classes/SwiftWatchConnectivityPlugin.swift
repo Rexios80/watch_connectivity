@@ -76,4 +76,27 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
       self.channel.invokeMethod("didReceiveApplicationContext", arguments: applicationContext)
     }
   }
+    
+  public func session(_ session: WCSession, didReceive file: WCSessionFile) {
+    let fileManager = FileManager.default
+    guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+      print("SwiftWatchConnectivityPlugin: Error finding documents directory.")
+      return
+    }
+    let newFileURL = documentsDirectory.appendingPathComponent(file.fileURL.lastPathComponent)
+    DispatchQueue.global().async {
+      do {
+        if fileManager.fileExists(atPath: newFileURL.path) {
+          try fileManager.removeItem(at: newFileURL)
+        }
+        try fileManager.moveItem(at: file.fileURL, to: newFileURL)
+        print("SwiftWatchConnectivityPlugin: Moved file to \(newFileURL.path)")
+        DispatchQueue.main.async {
+          self.channel.invokeMethod("didReceiveTransferFile", arguments: ["fileURL": newFileURL.absoluteString])
+        }
+      } catch {
+        print("SwiftWatchConnectivityPlugin: Error moving file: \(error.localizedDescription)")
+      }
+    }
+  }
 }
