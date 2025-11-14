@@ -1,3 +1,7 @@
+## 0.2.4
+
+- Android compileSdkVersion 36
+
 ## 0.2.3
 
 - Adds the new Wear OS companion app identifier (by [@J-shw](https://github.com/J-shw) in [#34](https://github.com/Rexios80/watch_connectivity/pull/34))

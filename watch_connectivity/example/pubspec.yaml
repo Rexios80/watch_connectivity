@@ -20,7 +20,7 @@ dependencies:
     path: ../../watch_connectivity_garmin
 
   is_wear: ^0.0.1+1
-  wear_plus: ^1.2.1
+  wear_plus: ^1.2.4
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,7 @@
+## 0.1.8
+
+- Android compileSdkVersion 36
+
 ## 0.1.7
 
 - Upgrades ConnectIQ to version 1.7.0
