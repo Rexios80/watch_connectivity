@@ -20,9 +20,9 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin, IQDevi
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let methodChannel = FlutterMethodChannel(name: "watch_connectivity_garmin", binaryMessenger: registrar.messenger())
+    let methodChannel = FlutterMethodChannel(name: "watch_connectivity_garmin/methods", binaryMessenger: registrar.messenger())
     let messageChannel = FlutterEventChannel(name: "watch_connectivity_garmin/messages", binaryMessenger: registrar.messenger())
-    let contextChannel = FlutterEventChannel(name: "watch_connectivity_garmin/contexts", binaryMessenger: registrar.messenger())
+    let contextChannel = FlutterEventChannel(name: "watch_connectivity_garmin/context", binaryMessenger: registrar.messenger())
     let instance = SwiftWatchConnectivityGarminPlugin(messageChannel: messageChannel, contextChannel: contextChannel)
     registrar.addMethodCallDelegate(instance, channel: methodChannel)
     registrar.addApplicationDelegate(instance)
