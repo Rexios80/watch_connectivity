@@ -2,79 +2,73 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart';
 
 /// Interface to communicate with watch devices
 ///
 /// Implementations are provided separately for each watch platform
 ///
 /// See implementation overrides for platform-specific documentation
+@immutable
 abstract class WatchConnectivityBase {
   /// The channel for communicating with the plugin's native code
   @protected
-  final MethodChannel channel;
+  final MethodChannel methodChannel;
 
-  final _messageStreamController =
-      StreamController<Map<String, dynamic>>.broadcast();
-  final _contextStreamController =
-      StreamController<Map<String, dynamic>>.broadcast();
+  /// The channel for receiving messages from the host platform
+  @protected
+  final EventChannel messageChannel;
+
+  /// The channel for receiving contexts from the host platform
+  @protected
+  final EventChannel contextChannel;
 
   /// Stream of messages received
-  Stream<Map<String, dynamic>> get messageStream =>
-      _messageStreamController.stream;
+  late final messageStream = messageChannel
+      .receiveBroadcastStream(identityHashCode(this))
+      .map((e) => Map<String, dynamic>.from(e));
 
   /// Stream of contexts received
-  Stream<Map<String, dynamic>> get contextStream =>
-      _contextStreamController.stream;
+  late final contextStream = contextChannel
+      .receiveBroadcastStream(identityHashCode(this))
+      .map((e) => Map<String, dynamic>.from(e));
 
   /// Create an instance of [WatchConnectivityBase] for the given
   /// [pluginName]
   WatchConnectivityBase({required String pluginName})
-      : channel = MethodChannel(pluginName) {
-    channel.setMethodCallHandler(_handle);
-  }
-
-  Future _handle(MethodCall call) async {
-    switch (call.method) {
-      case 'didReceiveMessage':
-        _messageStreamController.add(Map<String, dynamic>.from(call.arguments));
-        break;
-      case 'didReceiveApplicationContext':
-        _contextStreamController.add(Map<String, dynamic>.from(call.arguments));
-        break;
-      default:
-        throw UnimplementedError('${call.method} not implemented');
-    }
-  }
+      : methodChannel = MethodChannel('$pluginName/methods'),
+        messageChannel = EventChannel('$pluginName/messages'),
+        contextChannel = EventChannel('$pluginName/context');
 
   /// If watches are supported by the current platform
   Future<bool> get isSupported async {
-    final supported = await channel.invokeMethod<bool>('isSupported');
+    final supported = await methodChannel.invokeMethod<bool>('isSupported');
     return supported ?? false;
   }
 
   /// If a watch is paired
   Future<bool> get isPaired async {
-    final paired = await channel.invokeMethod<bool>('isPaired');
+    final paired = await methodChannel.invokeMethod<bool>('isPaired');
     return paired ?? false;
   }
 
   /// If the companion app is reachable
   Future<bool> get isReachable async {
-    final reachable = await channel.invokeMethod<bool>('isReachable');
+    final reachable = await methodChannel.invokeMethod<bool>('isReachable');
     return reachable ?? false;
   }
 
   /// The most recently sent contextual data
   Future<Map<String, dynamic>> get applicationContext async {
-    final applicationContext =
-        await channel.invokeMapMethod<String, dynamic>('applicationContext');
+    final applicationContext = await methodChannel
+        .invokeMapMethod<String, dynamic>('applicationContext');
     return applicationContext ?? {};
   }
 
   /// A dictionary containing the last update data received
   Future<List<Map<String, dynamic>>> get receivedApplicationContexts async {
-    final receivedApplicationContexts =
-        await channel.invokeListMethod<Map>('receivedApplicationContexts');
+    final receivedApplicationContexts = await methodChannel
+        .invokeListMethod<Map>('receivedApplicationContexts');
     return receivedApplicationContexts
             ?.map((e) => e.cast<String, dynamic>())
             .toList() ??
@@ -83,11 +77,11 @@ abstract class WatchConnectivityBase {
 
   /// Send a message to all connected watches
   Future<void> sendMessage(Map<String, dynamic> message) {
-    return channel.invokeMethod('sendMessage', message);
+    return methodChannel.invokeMethod('sendMessage', message);
   }
 
   /// Update the application context
   Future<void> updateApplicationContext(Map<String, dynamic> context) {
-    return channel.invokeMethod('updateApplicationContext', context);
+    return methodChannel.invokeMethod('updateApplicationContext', context);
   }
 }

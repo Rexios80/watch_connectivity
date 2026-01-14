@@ -20,6 +20,10 @@ dev_dependencies:
 
   rexios_lints: ^17.0.2
 
+# dependency_overrides:
+#   watch_connectivity_platform_interface:
+#     path: ../watch_connectivity_platform_interface
+
 flutter:
   plugin:
     platforms:

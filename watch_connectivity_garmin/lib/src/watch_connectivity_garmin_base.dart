@@ -11,7 +11,7 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
 
   /// Initialize the platform SDK
   Future<void> initialize(GarminInitializationOptions options) {
-    return channel.invokeMethod('initialize', options.toJson());
+    return methodChannel.invokeMethod('initialize', options.toJson());
   }
 
   /// Launches Garmin Connect Mobile for the purpose of retrieving a list of
@@ -24,7 +24,7 @@ class WatchConnectivityGarmin extends WatchConnectivityBase {
   ///
   /// iOS only
   Future<void> showDeviceSelection() {
-    return channel.invokeMethod('showDeviceSelection');
+    return methodChannel.invokeMethod('showDeviceSelection');
   }
 
   /// If the Garmin Connect app is installed

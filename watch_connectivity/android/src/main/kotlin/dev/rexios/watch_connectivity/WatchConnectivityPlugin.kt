@@ -1,10 +1,17 @@
 package dev.rexios.watch_connectivity
 
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import com.google.android.gms.wearable.*
+import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent.TYPE_CHANGED
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.MessageClient
+import com.google.android.gms.wearable.MessageEvent
+import com.google.android.gms.wearable.Node
+import com.google.android.gms.wearable.NodeClient
+import com.google.android.gms.wearable.PutDataRequest
+import com.google.android.gms.wearable.Wearable
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -20,11 +27,12 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
     private val channelName = "watch_connectivity"
 
-    /// The MethodChannel that will the communication between Flutter and native Android
-    ///
-    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-    /// when the Flutter Engine is detached from the Activity
-    private lateinit var channel: MethodChannel
+    val messageHandler = StreamHandler()
+    val contextHandler = StreamHandler()
+
+    private lateinit var methodChannel: MethodChannel
+    private lateinit var messageChannel: EventChannel
+    private lateinit var contextChannel: EventChannel
     private lateinit var packageManager: PackageManager
     private lateinit var nodeClient: NodeClient
     private lateinit var messageClient: MessageClient
@@ -32,8 +40,13 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     private lateinit var localNode: Node
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
-        channel.setMethodCallHandler(this)
+        methodChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "$channelName/methods")
+        messageChannel = EventChannel(flutterPluginBinding.binaryMessenger, "$channelName/messages")
+        contextChannel = EventChannel(flutterPluginBinding.binaryMessenger, "$channelName/context")
+
+        methodChannel.setMethodCallHandler(this)
+        messageChannel.setStreamHandler(messageHandler)
+        contextChannel.setStreamHandler(contextHandler)
 
         val context = flutterPluginBinding.applicationContext
 
@@ -49,7 +62,9 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
+        methodChannel.setMethodCallHandler(null)
+        messageChannel.setStreamHandler(null)
+        contextChannel.setStreamHandler(null)
         messageClient.removeListener(this)
         dataClient.removeListener(this)
     }
@@ -93,38 +108,33 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     }
 
     private fun isReachable(result: Result) {
-        nodeClient.connectedNodes
-            .addOnSuccessListener { result.success(it.isNotEmpty()) }
+        nodeClient.connectedNodes.addOnSuccessListener { result.success(it.isNotEmpty()) }
             .addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
-    @SuppressLint("VisibleForTests")
     private fun applicationContext(result: Result) {
-        dataClient.dataItems
-            .addOnSuccessListener { items ->
-                val localNodeItem = items.firstOrNull {
-                    // Only elements from the local node (there should only be one)
-                    it.uri.host == localNode.id && it.uri.path == "/$channelName"
-                }
-                if (localNodeItem != null) {
-                    val itemContent = objectFromBytes(localNodeItem.data!!)
-                    result.success(itemContent)
-                } else {
-                    result.success(emptyMap<String, Any>())
-                }
-            }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
+        dataClient.dataItems.addOnSuccessListener { items ->
+            val localNodeItem = items.firstOrNull {
+                // Only elements from the local node (there should only be one)
+                it.uri.host == localNode.id && it.uri.path == "/$channelName"
+            }
+            if (localNodeItem != null) {
+                val itemContent = objectFromBytes(localNodeItem.data!!)
+                result.success(itemContent)
+            } else {
+                result.success(emptyMap<String, Any>())
+            }
+        }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
-    @SuppressLint("VisibleForTests")
     private fun receivedApplicationContexts(result: Result) {
-        dataClient.dataItems
-            .addOnSuccessListener { items ->
-                val itemContents = items.filter {
-                    // Elements that are not from the local node
-                    it.uri.host != localNode.id && it.uri.path == "/$channelName"
-                }.map { objectFromBytes(it.data!!) }
-                result.success(itemContents)
-            }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
+        dataClient.dataItems.addOnSuccessListener { items ->
+            val itemContents = items.filter {
+                // Elements that are not from the local node
+                it.uri.host != localNode.id && it.uri.path == "/$channelName"
+            }.map { objectFromBytes(it.data!!) }
+            result.success(itemContents)
+        }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
     private fun sendMessage(call: MethodCall, result: Result) {
@@ -135,33 +145,46 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
         }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
-    @SuppressLint("VisibleForTests")
     private fun updateApplicationContext(call: MethodCall, result: Result) {
         val eventData = objectToBytes(call.arguments)
         val dataItem = PutDataRequest.create("/$channelName")
         dataItem.data = eventData
-        dataClient.putDataItem(dataItem)
-            .addOnSuccessListener { result.success(null) }
+        dataClient.putDataItem(dataItem).addOnSuccessListener { result.success(null) }
             .addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
 
     }
 
     override fun onMessageReceived(message: MessageEvent) {
         val messageContent = objectFromBytes(message.data)
-        channel.invokeMethod("didReceiveMessage", messageContent)
+        messageHandler.success(messageContent)
     }
 
-    @SuppressLint("VisibleForTests")
     override fun onDataChanged(dataItems: DataEventBuffer) {
-        dataItems
-            .filter {
-                it.type == TYPE_CHANGED
-                        && it.dataItem.uri.host != localNode.id
-                        && it.dataItem.uri.path == "/$channelName"
-            }
-            .forEach { item ->
-                val eventContent = objectFromBytes(item.dataItem.data!!)
-                channel.invokeMethod("didReceiveApplicationContext", eventContent)
-            }
+        dataItems.filter {
+            it.type == TYPE_CHANGED && it.dataItem.uri.host != localNode.id && it.dataItem.uri.path == "/$channelName"
+        }.forEach { item ->
+            val eventContent = objectFromBytes(item.dataItem.data!!)
+            contextHandler.success(eventContent)
+        }
+    }
+}
+
+class StreamHandler : EventChannel.StreamHandler {
+    val sinks = mutableMapOf<Int, EventChannel.EventSink>()
+
+    override fun onListen(
+        arguments: Any?, events: EventChannel.EventSink?
+    ) {
+        sinks[arguments as Int] = events!!
+    }
+
+    override fun onCancel(arguments: Any?) {
+        sinks.remove(arguments as Int)
+    }
+
+    fun success(event: Any?) {
+        for (sink in sinks.values) {
+            sink.success(event)
+        }
     }
 }

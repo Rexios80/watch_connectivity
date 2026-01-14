@@ -3,12 +3,14 @@ import UIKit
 import WatchConnectivity
 
 public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDelegate {
-  let channel: FlutterMethodChannel
+  let messageHandler = StreamHandler()
+  let contextHandler = StreamHandler()
   let session: WCSession?
     
-  init(channel: FlutterMethodChannel) {
-    self.channel = channel
-        
+  init(messageChannel: FlutterEventChannel, contextChannel: FlutterEventChannel) {
+    messageChannel.setStreamHandler(messageHandler)
+    contextChannel.setStreamHandler(contextHandler)
+
     if WCSession.isSupported() {
       session = WCSession.default
     } else {
@@ -22,9 +24,11 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
   }
     
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "watch_connectivity", binaryMessenger: registrar.messenger())
-    let instance = SwiftWatchConnectivityPlugin(channel: channel)
-    registrar.addMethodCallDelegate(instance, channel: channel)
+    let methodChannel = FlutterMethodChannel(name: "watch_connectivity/methods", binaryMessenger: registrar.messenger())
+    let messageChannel = FlutterEventChannel(name: "watch_connectivity/messages", binaryMessenger: registrar.messenger())
+    let contextChannel = FlutterEventChannel(name: "watch_connectivity/context", binaryMessenger: registrar.messenger())
+    let instance = SwiftWatchConnectivityPlugin(messageChannel: messageChannel, contextChannel: contextChannel)
+    registrar.addMethodCallDelegate(instance, channel: methodChannel)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -67,13 +71,33 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
     
   public func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
     DispatchQueue.main.async {
-      self.channel.invokeMethod("didReceiveMessage", arguments: message)
+      self.messageHandler.success(message)
     }
   }
     
   public func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
     DispatchQueue.main.async {
-      self.channel.invokeMethod("didReceiveApplicationContext", arguments: applicationContext)
+      self.contextHandler.success(applicationContext)
+    }
+  }
+}
+
+class StreamHandler: NSObject, FlutterStreamHandler {
+  private var sinks: [Int: FlutterEventSink] = [:]
+
+  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+    sinks[arguments as! Int] = events
+    return nil
+  }
+
+  func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    sinks.removeValue(forKey: arguments as! Int)
+    return nil
+  }
+  
+  func success(_ event: Any?) {
+    for sink in sinks.values {
+      sink(event)
     }
   }
 }

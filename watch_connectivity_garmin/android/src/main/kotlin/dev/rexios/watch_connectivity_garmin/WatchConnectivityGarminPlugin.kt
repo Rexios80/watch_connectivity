@@ -10,6 +10,7 @@ import com.garmin.android.connectiq.ConnectIQ.IQSdkErrorStatus
 import com.garmin.android.connectiq.IQApp
 import com.garmin.android.connectiq.IQDevice
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -20,19 +21,27 @@ import kotlin.concurrent.thread
 
 /** WatchConnectivityGarminPlugin */
 class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
-    /// The MethodChannel that will the communication between Flutter and native Android
-    ///
-    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-    /// when the Flutter Engine is detached from the Activity
-    private lateinit var channel: MethodChannel
+    private val channelName = "watch_connectivity_garmin"
+
+    val messageHandler = StreamHandler()
+    val contextHandler = StreamHandler()
+
+    private lateinit var methodChannel: MethodChannel
+    private lateinit var messageChannel: EventChannel
+    private lateinit var contextChannel: EventChannel
     private lateinit var context: Context
     private lateinit var packageManager: PackageManager
     private lateinit var connectIQ: ConnectIQ
     private lateinit var iqApp: IQApp
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "watch_connectivity_garmin")
-        channel.setMethodCallHandler(this)
+        methodChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "$channelName/methods")
+        messageChannel = EventChannel(flutterPluginBinding.binaryMessenger, "$channelName/messages")
+        contextChannel = EventChannel(flutterPluginBinding.binaryMessenger, "$channelName/context")
+
+        methodChannel.setMethodCallHandler(this)
+        messageChannel.setStreamHandler(messageHandler)
+        contextChannel.setStreamHandler(contextHandler)
 
         context = flutterPluginBinding.applicationContext
 
@@ -40,7 +49,9 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
+        methodChannel.setMethodCallHandler(null)
+        messageChannel.setStreamHandler(null)
+        contextChannel.setStreamHandler(null)
         connectIQ.shutdown(context)
     }
 
@@ -109,7 +120,7 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
             connectIQ.registerForAppEvents(device, iqApp) { _, _, data, status ->
                 if (status != ConnectIQ.IQMessageStatus.SUCCESS) return@registerForAppEvents
                 for (datum in data) {
-                    channel.invokeMethod("didReceiveMessage", datum)
+                    messageHandler.success(datum)
                 }
             }
         } else {
@@ -121,9 +132,7 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
         var installedApp: IQApp? = null
         val latch = CountDownLatch(1)
         connectIQ.getApplicationInfo(
-            iqApp.applicationId,
-            device,
-            object : IQApplicationInfoListener {
+            iqApp.applicationId, device, object : IQApplicationInfoListener {
                 override fun onApplicationInfoReceived(app: IQApp?) {
                     installedApp = app
                     latch.countDown()
@@ -132,8 +141,7 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
                 override fun onApplicationNotInstalled(p0: String?) {
                     latch.countDown()
                 }
-            }
-        )
+            })
         latch.await()
         return installedApp
     }
@@ -185,6 +193,26 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
             } else {
                 result.success(null)
             }
+        }
+    }
+}
+
+class StreamHandler : EventChannel.StreamHandler {
+    val sinks = mutableMapOf<Int, EventChannel.EventSink>()
+
+    override fun onListen(
+        arguments: Any?, events: EventChannel.EventSink?
+    ) {
+        sinks[arguments as Int] = events!!
+    }
+
+    override fun onCancel(arguments: Any?) {
+        sinks.remove(arguments as Int)
+    }
+
+    fun success(event: Any?) {
+        for (sink in sinks.values) {
+            sink.success(event)
         }
     }
 }
