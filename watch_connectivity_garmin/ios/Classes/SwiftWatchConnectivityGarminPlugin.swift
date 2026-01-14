@@ -5,22 +5,26 @@ import UIKit
 public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin, IQDeviceEventDelegate, IQAppMessageDelegate {
   private static let deviceIdsKey = "watch_connectivity_garmin/deviceIds"
 
-  let channel: FlutterMethodChannel
   let connectIQ = ConnectIQ.sharedInstance()!
   let defaults = UserDefaults.standard
+  let messageHandler = StreamHandler()
+  let contextHandler = StreamHandler()
   var applicationId: String?
   var urlScheme: String?
 
-  init(channel: FlutterMethodChannel) {
-    self.channel = channel
+  init(messageChannel: FlutterEventChannel, contextChannel: FlutterEventChannel) {
+    messageChannel.setStreamHandler(messageHandler)
+    contextChannel.setStreamHandler(contextHandler)
 
     super.init()
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "watch_connectivity_garmin", binaryMessenger: registrar.messenger())
-    let instance = SwiftWatchConnectivityGarminPlugin(channel: channel)
-    registrar.addMethodCallDelegate(instance, channel: channel)
+    let methodChannel = FlutterMethodChannel(name: "watch_connectivity_garmin", binaryMessenger: registrar.messenger())
+    let messageChannel = FlutterEventChannel(name: "watch_connectivity_garmin/messages", binaryMessenger: registrar.messenger())
+    let contextChannel = FlutterEventChannel(name: "watch_connectivity_garmin/contexts", binaryMessenger: registrar.messenger())
+    let instance = SwiftWatchConnectivityGarminPlugin(messageChannel: messageChannel, contextChannel: contextChannel)
+    registrar.addMethodCallDelegate(instance, channel: methodChannel)
     registrar.addApplicationDelegate(instance)
   }
 
@@ -174,8 +178,28 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin, IQDevi
   }
 
   public func receivedMessage(_ message: Any!, from app: IQApp!) {
-    channel.invokeMethod("didReceiveMessage", arguments: message)
+    messageHandler.success(message)
   }
 }
 
 class IQUIOverrideDelegateStub: NSObject, IQUIOverrideDelegate {}
+
+class StreamHandler: NSObject, FlutterStreamHandler {
+  private var sinks: [Int: FlutterEventSink] = [:]
+
+  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+    sinks[arguments as! Int] = events
+    return nil
+  }
+
+  func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    sinks.removeValue(forKey: arguments as! Int)
+    return nil
+  }
+  
+  func success(_ event: Any?) {
+    for sink in sinks.values {
+      sink(event)
+    }
+  }
+}
