@@ -2,8 +2,15 @@ package dev.rexios.watch_connectivity
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import com.google.android.gms.wearable.*
+import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent.TYPE_CHANGED
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.MessageClient
+import com.google.android.gms.wearable.MessageEvent
+import com.google.android.gms.wearable.Node
+import com.google.android.gms.wearable.NodeClient
+import com.google.android.gms.wearable.PutDataRequest
+import com.google.android.gms.wearable.Wearable
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -93,38 +100,35 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     }
 
     private fun isReachable(result: Result) {
-        nodeClient.connectedNodes
-            .addOnSuccessListener { result.success(it.isNotEmpty()) }
+        nodeClient.connectedNodes.addOnSuccessListener { result.success(it.isNotEmpty()) }
             .addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
     @SuppressLint("VisibleForTests")
     private fun applicationContext(result: Result) {
-        dataClient.dataItems
-            .addOnSuccessListener { items ->
-                val localNodeItem = items.firstOrNull {
-                    // Only elements from the local node (there should only be one)
-                    it.uri.host == localNode.id && it.uri.path == "/$channelName"
-                }
-                if (localNodeItem != null) {
-                    val itemContent = objectFromBytes(localNodeItem.data!!)
-                    result.success(itemContent)
-                } else {
-                    result.success(emptyMap<String, Any>())
-                }
-            }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
+        dataClient.dataItems.addOnSuccessListener { items ->
+            val localNodeItem = items.firstOrNull {
+                // Only elements from the local node (there should only be one)
+                it.uri.host == localNode.id && it.uri.path == "/$channelName"
+            }
+            if (localNodeItem != null) {
+                val itemContent = objectFromBytes(localNodeItem.data!!)
+                result.success(itemContent)
+            } else {
+                result.success(emptyMap<String, Any>())
+            }
+        }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
     @SuppressLint("VisibleForTests")
     private fun receivedApplicationContexts(result: Result) {
-        dataClient.dataItems
-            .addOnSuccessListener { items ->
-                val itemContents = items.filter {
-                    // Elements that are not from the local node
-                    it.uri.host != localNode.id && it.uri.path == "/$channelName"
-                }.map { objectFromBytes(it.data!!) }
-                result.success(itemContents)
-            }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
+        dataClient.dataItems.addOnSuccessListener { items ->
+            val itemContents = items.filter {
+                // Elements that are not from the local node
+                it.uri.host != localNode.id && it.uri.path == "/$channelName"
+            }.map { objectFromBytes(it.data!!) }
+            result.success(itemContents)
+        }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
     private fun sendMessage(call: MethodCall, result: Result) {
@@ -140,8 +144,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
         val eventData = objectToBytes(call.arguments)
         val dataItem = PutDataRequest.create("/$channelName")
         dataItem.data = eventData
-        dataClient.putDataItem(dataItem)
-            .addOnSuccessListener { result.success(null) }
+        dataClient.putDataItem(dataItem).addOnSuccessListener { result.success(null) }
             .addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
 
     }
@@ -153,15 +156,11 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
 
     @SuppressLint("VisibleForTests")
     override fun onDataChanged(dataItems: DataEventBuffer) {
-        dataItems
-            .filter {
-                it.type == TYPE_CHANGED
-                        && it.dataItem.uri.host != localNode.id
-                        && it.dataItem.uri.path == "/$channelName"
-            }
-            .forEach { item ->
-                val eventContent = objectFromBytes(item.dataItem.data!!)
-                channel.invokeMethod("didReceiveApplicationContext", eventContent)
-            }
+        dataItems.filter {
+            it.type == TYPE_CHANGED && it.dataItem.uri.host != localNode.id && it.dataItem.uri.path == "/$channelName"
+        }.forEach { item ->
+            val eventContent = objectFromBytes(item.dataItem.data!!)
+            channel.invokeMethod("didReceiveApplicationContext", eventContent)
+        }
     }
 }

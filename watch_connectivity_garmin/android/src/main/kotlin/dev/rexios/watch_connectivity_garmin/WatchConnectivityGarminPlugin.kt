@@ -121,9 +121,7 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
         var installedApp: IQApp? = null
         val latch = CountDownLatch(1)
         connectIQ.getApplicationInfo(
-            iqApp.applicationId,
-            device,
-            object : IQApplicationInfoListener {
+            iqApp.applicationId, device, object : IQApplicationInfoListener {
                 override fun onApplicationInfoReceived(app: IQApp?) {
                     installedApp = app
                     latch.countDown()
@@ -132,8 +130,7 @@ class WatchConnectivityGarminPlugin : FlutterPlugin, MethodCallHandler {
                 override fun onApplicationNotInstalled(p0: String?) {
                     latch.countDown()
                 }
-            }
-        )
+            })
         latch.await()
         return installedApp
     }
