@@ -1,6 +1,9 @@
 import 'package:recase/recase.dart';
+import 'package:meta/meta.dart';
 
 /// Initialization options for the Garmin SDK
+
+@immutable
 class GarminInitializationOptions {
   /// The id of the companion application to communicate with
   final String applicationId;
@@ -22,7 +25,7 @@ class GarminInitializationOptions {
   final int adbPort;
 
   /// Constructor
-  GarminInitializationOptions({
+  const GarminInitializationOptions({
     required this.applicationId,
     required this.urlScheme,
     this.autoUI = false,

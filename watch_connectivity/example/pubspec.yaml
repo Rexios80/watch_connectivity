@@ -19,14 +19,11 @@ dependencies:
   watch_connectivity_garmin:
     path: ../../watch_connectivity_garmin
 
-  is_wear: ^0.0.1+1
-  wear_plus: ^1.2.4
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  rexios_lints: ^15.0.1
+  rexios_lints: ^17.0.2
 
 dependency_overrides:
   watch_connectivity_platform_interface:

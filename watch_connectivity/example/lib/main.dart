@@ -1,18 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:is_wear/is_wear.dart';
 
 import 'package:watch_connectivity/watch_connectivity.dart';
-import 'package:wear_plus/wear_plus.dart';
 
-late final bool isWear;
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  isWear = (await IsWear().check()) ?? false;
-
+void main() {
   runApp(const MyApp());
 }
 
@@ -62,63 +54,56 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final home = Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Supported: $_supported'),
-                Text('Paired: $_paired'),
-                Text('Reachable: $_reachable'),
-                Text('Context: $_context'),
-                Text('Received contexts: $_receivedContexts'),
-                TextButton(
-                  onPressed: initPlatformState,
-                  child: const Text('Refresh'),
-                ),
-                const SizedBox(height: 8),
-                const Text('Send'),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: sendMessage,
-                      child: const Text('Message'),
-                    ),
-                    const SizedBox(width: 8),
-                    TextButton(
-                      onPressed: sendContext,
-                      child: const Text('Context'),
-                    ),
-                  ],
-                ),
-                TextButton(
-                  onPressed: toggleBackgroundMessaging,
-                  child: Text(
-                    '${timer == null ? 'Start' : 'Stop'} background messaging',
-                    textAlign: TextAlign.center,
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Supported: $_supported'),
+                  Text('Paired: $_paired'),
+                  Text('Reachable: $_reachable'),
+                  Text('Context: $_context'),
+                  Text('Received contexts: $_receivedContexts'),
+                  TextButton(
+                    onPressed: initPlatformState,
+                    child: const Text('Refresh'),
                   ),
-                ),
-                const SizedBox(width: 16),
-                const Text('Log'),
-                ..._log.reversed.map(Text.new),
-              ],
+                  const SizedBox(height: 8),
+                  const Text('Send'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: sendMessage,
+                        child: const Text('Message'),
+                      ),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        onPressed: sendContext,
+                        child: const Text('Context'),
+                      ),
+                    ],
+                  ),
+                  TextButton(
+                    onPressed: toggleBackgroundMessaging,
+                    child: Text(
+                      '${timer == null ? 'Start' : 'Stop'} background messaging',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Text('Log'),
+                  ..._log.reversed.map(Text.new),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    );
-
-    return MaterialApp(
-      home: isWear
-          ? AmbientMode(
-              builder: (context, mode, child) => child!,
-              child: home,
-            )
-          : home,
     );
   }
 
