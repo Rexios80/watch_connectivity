@@ -350,21 +350,21 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.2.4"
+    version: "0.2.5"
   watch_connectivity_garmin:
     dependency: "direct main"
     description:
       path: "../../watch_connectivity_garmin"
       relative: true
     source: path
-    version: "0.1.8"
+    version: "0.1.9"
   watch_connectivity_platform_interface:
     dependency: "direct overridden"
     description:
       path: "../../watch_connectivity_platform_interface"
       relative: true
     source: path
-    version: "0.2.0"
+    version: "0.3.0"
   watcher:
     dependency: transitive
     description:
