@@ -1,3 +1,7 @@
+## 0.2.5
+
+- Upgrades `watch_connectivity_platform_interface` to version 0.3.0
+
 ## 0.2.4
 
 - Android compileSdkVersion 36
