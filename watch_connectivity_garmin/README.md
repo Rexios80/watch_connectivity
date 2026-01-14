@@ -55,7 +55,7 @@ void example() {
 
   // Must be called before any other methods
   watch.initialize(
-    GarminInitializationOptions(
+    const GarminInitializationOptions(
       applicationId: 'your-application-id',
       urlScheme: 'your-url-scheme',
     ),
