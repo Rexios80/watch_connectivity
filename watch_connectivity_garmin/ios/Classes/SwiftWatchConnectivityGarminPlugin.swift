@@ -193,7 +193,8 @@ class StreamHandler: NSObject, FlutterStreamHandler {
   }
 
   func onCancel(withArguments arguments: Any?) -> FlutterError? {
-    sinks.removeValue(forKey: arguments as! Int)
+    guard let id = arguments as? Int else { return nil }
+    sinks.removeValue(forKey: id)
     return nil
   }
   

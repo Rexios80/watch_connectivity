@@ -207,7 +207,8 @@ class StreamHandler : EventChannel.StreamHandler {
     }
 
     override fun onCancel(arguments: Any?) {
-        sinks.remove(arguments as Int)
+        val id = arguments as? Int ?: return
+        sinks.remove(id)
     }
 
     fun success(event: Any?) {
