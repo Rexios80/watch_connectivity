@@ -1,3 +1,7 @@
+## 0.2.7
+
+- Add `isWatchAppInstalled` method
+
 ## 0.2.6
 
 - Fixes NPE on hot reload

@@ -58,6 +58,12 @@ abstract class WatchConnectivityBase {
     return reachable ?? false;
   }
 
+  /// If the watch app is installed
+  Future<bool> get isWatchAppInstalled async {
+    final installed = await methodChannel.invokeMethod<bool>('isWatchAppInstalled');
+    return installed ?? false;
+  }
+
   /// The most recently sent contextual data
   Future<Map<String, dynamic>> get applicationContext async {
     final applicationContext = await methodChannel

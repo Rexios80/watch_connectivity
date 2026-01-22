@@ -1,3 +1,7 @@
+## 0.3.1
+
+- Add `isWatchAppInstalled` method
+
 ## 0.3.0
 
 - Replace `MethodChannel` with `EventChannel` for messages from the host platform

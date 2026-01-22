@@ -17,6 +17,12 @@ class WatchConnectivity extends WatchConnectivityBase {
   @override
   Future<bool> get isReachable => super.isReachable;
 
+  /// Apple Watch: If the watch app is installed
+  ///
+  /// WearOS: If any connected nodes exist (best-effort check)
+  @override
+  Future<bool> get isWatchAppInstalled => super.isWatchAppInstalled;
+
   /// Apple Watch: This will only ever contain one map
   ///
   /// WearOS: This will contain one map for every node that has sent a context
