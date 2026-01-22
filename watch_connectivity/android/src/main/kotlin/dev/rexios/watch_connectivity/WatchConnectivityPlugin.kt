@@ -75,6 +75,7 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
             "isSupported" -> result.success(true)
             "isPaired" -> isPaired(result)
             "isReachable" -> isReachable(result)
+            "isWatchAppInstalled" -> isWatchAppInstalled(result)
             "applicationContext" -> applicationContext(result)
             "receivedApplicationContexts" -> receivedApplicationContexts(result)
 
@@ -110,6 +111,16 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
     private fun isReachable(result: Result) {
         nodeClient.connectedNodes.addOnSuccessListener { result.success(it.isNotEmpty()) }
             .addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
+    }
+
+    private fun isWatchAppInstalled(result: Result) {
+        // Check if any connected node has the watch app installed
+        // For WearOS, we check if there are connected nodes with the app
+        nodeClient.connectedNodes.addOnSuccessListener { nodes ->
+            // If there are connected nodes, the watch app is likely installed
+            // This is a best-effort check for WearOS
+            result.success(nodes.isNotEmpty())
+        }.addOnFailureListener { result.error(it.message ?: "", it.localizedMessage, it) }
     }
 
     private fun applicationContext(result: Result) {
