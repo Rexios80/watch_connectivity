@@ -2,27 +2,25 @@ import Flutter
 import UIKit
 import WatchConnectivity
 
-public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDelegate {
-  let messageHandler = StreamHandler()
-  let contextHandler = StreamHandler()
-  let session: WCSession?
-    
-  init(messageChannel: FlutterEventChannel, contextChannel: FlutterEventChannel) {
-    messageChannel.setStreamHandler(messageHandler)
-    contextChannel.setStreamHandler(contextHandler)
+public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin {
+  static let delegate = SessionDelegate()
+  static let messageHandler = StreamHandler()
+  static let contextHandler = StreamHandler()
+  static var session: WCSession?
 
-    if WCSession.isSupported() {
-      session = WCSession.default
-    } else {
-      session = nil
+  init(messageChannel: FlutterEventChannel, contextChannel: FlutterEventChannel) {
+    messageChannel.setStreamHandler(Self.messageHandler)
+    contextChannel.setStreamHandler(Self.contextHandler)
+
+    if Self.session == nil, WCSession.isSupported() {
+      Self.session = WCSession.default
+      Self.session?.delegate = Self.delegate
+      Self.session?.activate()
     }
-        
+
     super.init()
-        
-    session?.delegate = self
-    session?.activate()
   }
-    
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let methodChannel = FlutterMethodChannel(name: "watch_connectivity/methods", binaryMessenger: registrar.messenger())
     let messageChannel = FlutterEventChannel(name: "watch_connectivity/messages", binaryMessenger: registrar.messenger())
@@ -37,20 +35,20 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
     case "isSupported":
       result(WCSession.isSupported())
     case "isPaired":
-      result(session?.isPaired ?? false)
+      result(Self.session?.isPaired ?? false)
     case "isReachable":
-      result(session?.isReachable ?? false)
+      result(Self.session?.isReachable ?? false)
     case "applicationContext":
-      result(session?.applicationContext ?? [:])
+      result(Self.session?.applicationContext ?? [:])
     case "receivedApplicationContexts":
-      result([session?.receivedApplicationContext ?? [:]])
+      result([Self.session?.receivedApplicationContext ?? [:]])
     // Methods
     case "sendMessage":
-      session?.sendMessage(call.arguments as! [String: Any], replyHandler: nil)
+      Self.session?.sendMessage(call.arguments as! [String: Any], replyHandler: nil)
       result(nil)
     case "updateApplicationContext":
       do {
-        try session?.updateApplicationContext(call.arguments as! [String: Any])
+        try Self.session?.updateApplicationContext(call.arguments as! [String: Any])
         result(nil)
       } catch {
         result(FlutterError(code: "Error updating application context", message: error.localizedDescription, details: nil))
@@ -60,24 +58,26 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDel
       result(FlutterMethodNotImplemented)
     }
   }
-    
-  public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {}
-    
-  public func sessionDidBecomeInactive(_ session: WCSession) {}
-    
-  public func sessionDidDeactivate(_ session: WCSession) {
+}
+
+class SessionDelegate: NSObject, WCSessionDelegate {
+  func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {}
+
+  func sessionDidBecomeInactive(_ session: WCSession) {}
+
+  func sessionDidDeactivate(_ session: WCSession) {
     session.activate()
   }
-    
-  public func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+
+  func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
     DispatchQueue.main.async {
-      self.messageHandler.success(message)
+      SwiftWatchConnectivityPlugin.messageHandler.success(message)
     }
   }
-    
-  public func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
+
+  func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
     DispatchQueue.main.async {
-      self.contextHandler.success(applicationContext)
+      SwiftWatchConnectivityPlugin.contextHandler.success(applicationContext)
     }
   }
 }
@@ -95,7 +95,7 @@ class StreamHandler: NSObject, FlutterStreamHandler {
     sinks.removeValue(forKey: id)
     return nil
   }
-  
+
   func success(_ event: Any?) {
     for sink in sinks.values {
       sink(event)

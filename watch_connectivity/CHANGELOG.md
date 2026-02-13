@@ -1,5 +1,6 @@
 ## 0.2.7
 
+- Fixes multi-isolate issues on iOS
 - Upgrades `watch_connectivity_platform_interface` to version 0.4.0
 
 ## 0.2.6
