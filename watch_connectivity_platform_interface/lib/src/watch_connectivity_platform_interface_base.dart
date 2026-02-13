@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
+import 'package:uuid/uuid.dart';
 
 /// Interface to communicate with watch devices
 ///
@@ -11,6 +12,9 @@ import 'package:meta/meta.dart';
 /// See implementation overrides for platform-specific documentation
 @immutable
 abstract class WatchConnectivityBase {
+  /// Identifies this instance across isolates
+  final _uuid = const Uuid().v4();
+
   /// The channel for communicating with the plugin's native code
   @protected
   final MethodChannel methodChannel;
@@ -25,12 +29,12 @@ abstract class WatchConnectivityBase {
 
   /// Stream of messages received
   late final messageStream = messageChannel
-      .receiveBroadcastStream(identityHashCode(this))
+      .receiveBroadcastStream(_uuid)
       .map((e) => Map<String, dynamic>.from(e));
 
   /// Stream of contexts received
   late final contextStream = contextChannel
-      .receiveBroadcastStream(identityHashCode(this))
+      .receiveBroadcastStream(_uuid)
       .map((e) => Map<String, dynamic>.from(e));
 
   /// Create an instance of [WatchConnectivityBase] for the given

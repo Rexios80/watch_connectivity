@@ -185,15 +185,15 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin, IQDevi
 class IQUIOverrideDelegateStub: NSObject, IQUIOverrideDelegate {}
 
 class StreamHandler: NSObject, FlutterStreamHandler {
-  private var sinks: [Int: FlutterEventSink] = [:]
+  private var sinks: [String: FlutterEventSink] = [:]
 
   func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-    sinks[arguments as! Int] = events
+    sinks[arguments as! String] = events
     return nil
   }
 
   func onCancel(withArguments arguments: Any?) -> FlutterError? {
-    guard let id = arguments as? Int else { return nil }
+    guard let id = arguments as? String else { return nil }
     sinks.removeValue(forKey: id)
     return nil
   }

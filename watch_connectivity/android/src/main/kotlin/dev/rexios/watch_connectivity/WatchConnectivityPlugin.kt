@@ -170,16 +170,16 @@ class WatchConnectivityPlugin : FlutterPlugin, MethodCallHandler,
 }
 
 class StreamHandler : EventChannel.StreamHandler {
-    val sinks = mutableMapOf<Int, EventChannel.EventSink>()
+    val sinks = mutableMapOf<String, EventChannel.EventSink>()
 
     override fun onListen(
         arguments: Any?, events: EventChannel.EventSink?
     ) {
-        sinks[arguments as Int] = events!!
+        sinks[arguments as String] = events!!
     }
 
     override fun onCancel(arguments: Any?) {
-        val id = arguments as? Int ?: return
+        val id = arguments as? String ?: return
         sinks.remove(id)
     }
 

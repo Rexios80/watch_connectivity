@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   meta: ^1.17.0
+  uuid: ^4.5.2
 
 dev_dependencies:
   flutter_test:
