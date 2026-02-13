@@ -1,3 +1,7 @@
+## 0.4.0
+
+- Use uuid to identify instances across isolates
+
 ## 0.3.0
 
 - Replace `MethodChannel` with `EventChannel` for messages from the host platform
