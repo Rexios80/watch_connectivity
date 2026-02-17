@@ -30,3 +30,5 @@ build/
 
 # macOS
 .DS_Store
+.build/
+.swiftpm/

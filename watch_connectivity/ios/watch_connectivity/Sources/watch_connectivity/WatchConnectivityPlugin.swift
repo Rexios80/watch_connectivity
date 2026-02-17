@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 import WatchConnectivity
 
-public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin {
+public class WatchConnectivityPlugin: NSObject, FlutterPlugin {
   static let delegate = SessionDelegate()
   static let messageHandler = StreamHandler()
   static let contextHandler = StreamHandler()
@@ -25,7 +25,7 @@ public class SwiftWatchConnectivityPlugin: NSObject, FlutterPlugin {
     let methodChannel = FlutterMethodChannel(name: "watch_connectivity/methods", binaryMessenger: registrar.messenger())
     let messageChannel = FlutterEventChannel(name: "watch_connectivity/messages", binaryMessenger: registrar.messenger())
     let contextChannel = FlutterEventChannel(name: "watch_connectivity/context", binaryMessenger: registrar.messenger())
-    let instance = SwiftWatchConnectivityPlugin(messageChannel: messageChannel, contextChannel: contextChannel)
+    let instance = WatchConnectivityPlugin(messageChannel: messageChannel, contextChannel: contextChannel)
     registrar.addMethodCallDelegate(instance, channel: methodChannel)
   }
 
@@ -71,13 +71,13 @@ class SessionDelegate: NSObject, WCSessionDelegate {
 
   func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
     DispatchQueue.main.async {
-      SwiftWatchConnectivityPlugin.messageHandler.success(message)
+      WatchConnectivityPlugin.messageHandler.success(message)
     }
   }
 
   func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
     DispatchQueue.main.async {
-      SwiftWatchConnectivityPlugin.contextHandler.success(applicationContext)
+      WatchConnectivityPlugin.contextHandler.success(applicationContext)
     }
   }
 }
