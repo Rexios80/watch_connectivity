@@ -2,7 +2,7 @@ import ConnectIQ
 import Flutter
 import UIKit
 
-public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin, IQDeviceEventDelegate, IQAppMessageDelegate {
+public class WatchConnectivityGarminPlugin: NSObject, FlutterPlugin, IQDeviceEventDelegate, IQAppMessageDelegate {
   private static let deviceIdsKey = "watch_connectivity_garmin/deviceIds"
 
   let connectIQ = ConnectIQ.sharedInstance()!
@@ -23,7 +23,7 @@ public class SwiftWatchConnectivityGarminPlugin: NSObject, FlutterPlugin, IQDevi
     let methodChannel = FlutterMethodChannel(name: "watch_connectivity_garmin/methods", binaryMessenger: registrar.messenger())
     let messageChannel = FlutterEventChannel(name: "watch_connectivity_garmin/messages", binaryMessenger: registrar.messenger())
     let contextChannel = FlutterEventChannel(name: "watch_connectivity_garmin/context", binaryMessenger: registrar.messenger())
-    let instance = SwiftWatchConnectivityGarminPlugin(messageChannel: messageChannel, contextChannel: contextChannel)
+    let instance = WatchConnectivityGarminPlugin(messageChannel: messageChannel, contextChannel: contextChannel)
     registrar.addMethodCallDelegate(instance, channel: methodChannel)
     registrar.addApplicationDelegate(instance)
   }

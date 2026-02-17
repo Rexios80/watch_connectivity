@@ -14,13 +14,13 @@ A new Flutter plugin project.
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.subspec 'WatchConnectivityGarmin' do |ss|
-    ss.source_files = 'Classes/**/*'
+    ss.source_files = 'watch_connectivity_garmin/Sources/watch_connectivity_garmin/**/*'
     ss.dependency 'Flutter'
     ss.dependency 'watch_connectivity_garmin/ConnectIQ'
   end
   s.subspec 'ConnectIQ' do |ss|
-    ss.source_files     =  "ConnectIQ.xcframework"
-    ss.vendored_frameworks = "ConnectIQ.xcframework"
+    ss.source_files     =  "watch_connectivity_garmin/ConnectIQ.xcframework"
+    ss.vendored_frameworks = "watch_connectivity_garmin/ConnectIQ.xcframework"
   end
 
   s.platform = :ios, '13.0'

@@ -1,26 +1,15 @@
 PODS:
   - Flutter (1.0.0)
-  - watch_connectivity_garmin (0.0.1):
-    - watch_connectivity_garmin/ConnectIQ (= 0.0.1)
-    - watch_connectivity_garmin/WatchConnectivityGarmin (= 0.0.1)
-  - watch_connectivity_garmin/ConnectIQ (0.0.1)
-  - watch_connectivity_garmin/WatchConnectivityGarmin (0.0.1):
-    - Flutter
-    - watch_connectivity_garmin/ConnectIQ
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - watch_connectivity_garmin (from `.symlinks/plugins/watch_connectivity_garmin/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  watch_connectivity_garmin:
-    :path: ".symlinks/plugins/watch_connectivity_garmin/ios"
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  watch_connectivity_garmin: 7e909cda93bdb876494dfb0b87f609e75dba7f1f
 
 PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
 
