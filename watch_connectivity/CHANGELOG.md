@@ -1,3 +1,7 @@
+## 0.2.8
+
+- Supports SwiftPM
+
 ## 0.2.7
 
 - Fixes multi-isolate issues on iOS

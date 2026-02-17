@@ -1,6 +1,6 @@
 name: watch_connectivity_garmin
 description: Wrapper for the ConnectIQ SDK to communicate with Garmin watches
-version: 0.1.11
+version: 0.1.12
 homepage: https://github.com/Rexios80/watch_connectivity/tree/master/watch_connectivity_garmin
 
 environment:

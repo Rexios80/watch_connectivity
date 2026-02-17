@@ -1,3 +1,7 @@
+## 0.1.12
+
+- Supports SwiftPM
+
 ## 0.1.11
 
 - Upgrades `watch_connectivity_platform_interface` to version 0.4.0
