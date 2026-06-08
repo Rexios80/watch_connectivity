@@ -35,12 +35,12 @@ class GarminInitializationOptions {
 
   /// Convert to JSON
   Map<String, dynamic> toJson() => {
-        'applicationId': applicationId,
-        'urlScheme': urlScheme,
-        'autoUI': autoUI,
-        'connectType': connectType.name.constantCase,
-        'adbPort': adbPort,
-      };
+    'applicationId': applicationId,
+    'urlScheme': urlScheme,
+    'autoUI': autoUI,
+    'connectType': connectType.name.constantCase,
+    'adbPort': adbPort,
+  };
 }
 
 /// Enum for type of Garmin connection to establish
@@ -49,5 +49,5 @@ enum GarminIqConnectionType {
   tethered,
 
   /// Wireless connection
-  wireless;
+  wireless,
 }

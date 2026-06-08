@@ -1,3 +1,8 @@
+## 0.1.13
+
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+- Migrates to built-in Kotlin
+
 ## 0.1.12
 
 - Supports SwiftPM
