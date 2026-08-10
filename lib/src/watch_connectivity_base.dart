@@ -2,10 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+/// Answers a message the counterpart sent expecting a reply.
+///
+/// Returning an empty map is a valid "nothing to say"; the counterpart's send
+/// fails if nobody answers at all, so the plugin always replies with something.
+typedef WatchMessageResponder =
+    Future<Map<String, dynamic>> Function(Map<String, dynamic> message);
+
 /// Plugin to communicate with Apple Watch and WearOS devices
 class WatchConnectivity {
   /// The channel for communicating with the plugin's native code
   final MethodChannel channel;
+
+  WatchMessageResponder? _messageResponder;
 
   final _messageStreamController =
       StreamController<Map<String, dynamic>>.broadcast();
@@ -41,6 +50,12 @@ class WatchConnectivity {
       case 'didReceiveMessage':
         _messageStreamController.add(Map<String, dynamic>.from(call.arguments));
         break;
+      case 'didReceiveMessageWithReply':
+        final message = Map<String, dynamic>.from(call.arguments);
+        _messageStreamController.add(message);
+        final responder = _messageResponder;
+        if (responder == null) return <String, dynamic>{};
+        return await responder(message);
       case 'didReceiveApplicationContext':
         _contextStreamController.add(Map<String, dynamic>.from(call.arguments));
         break;
@@ -91,9 +106,25 @@ class WatchConnectivity {
         [];
   }
 
-  /// Send a message to all connected watches
+  /// Send a message to all connected watches.
+  ///
+  /// Best-effort and only for a counterpart that is running right now: it
+  /// throws if the counterpart is unreachable, and also if it is reachable but
+  /// implements only the reply-less receive callback (WCSession routes by the
+  /// form the sender used, and this sends the reply-carrying one so delivery
+  /// can be confirmed). Pair it with [updateApplicationContext], which reaches
+  /// a counterpart of either shape and survives it not running.
   Future<void> sendMessage(Map<String, dynamic> message) {
     return channel.invokeMethod('sendMessage', message);
+  }
+
+  /// Answer messages the counterpart sends expecting a reply.
+  ///
+  /// Only one responder is active; setting a new one replaces it. Messages are
+  /// published on [messageStream] either way, so a listener that does not need
+  /// to answer needs nothing here.
+  set messageResponder(WatchMessageResponder? responder) {
+    _messageResponder = responder;
   }
 
   /// Update the application context
@@ -112,6 +143,7 @@ class WatchConnectivity {
       return;
     }
     _isDisposed = true;
+    _messageResponder = null;
     channel.setMethodCallHandler(null);
     _messageStreamController.close();
     _contextStreamController.close();

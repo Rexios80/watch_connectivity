@@ -57,6 +57,18 @@ public class WatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDelegate
                     result(value)
                 }
             }
+            // Sent with a reply handler, so the future completes on real
+            // delivery rather than optimistically — WCSession has no
+            // "delivered" callback for the reply-less form.
+            //
+            // The cost is that this only reaches a counterpart implementing
+            // `session(_:didReceiveMessage:replyHandler:)`: WCSession routes
+            // by which form the *sender* used, and a counterpart implementing
+            // only `session(_:didReceiveMessage:)` fails the send with
+            // `WCErrorCodeDeliveryFailed`. Callers must therefore treat this
+            // as best-effort and still push the state through
+            // `updateApplicationContext`, which reaches a counterpart of
+            // either shape and survives it not running.
             session.sendMessage(
                 message,
                 replyHandler: { _ in
@@ -100,18 +112,52 @@ public class WatchConnectivityPlugin: NSObject, FlutterPlugin, WCSessionDelegate
             ]
         }
 
-        channel.invokeMethod("activationDidComplete", arguments: arguments)
+        invokeOnMain("activationDidComplete", arguments)
     }
 
     public func sessionDidBecomeInactive(_ session: WCSession) {}
 
-    public func sessionDidDeactivate(_ session: WCSession) {}
+    public func sessionDidDeactivate(_ session: WCSession) {
+        // A paired-watch switch deactivates the session; without reactivating,
+        // every later send fails silently.
+        session.activate()
+    }
 
     public func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-        channel.invokeMethod("didReceiveMessage", arguments: message)
+        invokeOnMain("didReceiveMessage", message)
+    }
+
+    /// The counterpart wants an answer, so Dart gets to produce one.
+    ///
+    /// Without this, a counterpart calling
+    /// `sendMessage(_:replyHandler:errorHandler:)` cannot reach this app at
+    /// all — WCSession refuses to deliver to a delegate that only implements
+    /// the reply-less variant. That is what a watch app does when it asks the
+    /// phone to re-send its configuration.
+    public func session(
+        _ session: WCSession,
+        didReceiveMessage message: [String: Any],
+        replyHandler: @escaping ([String: Any]) -> Void
+    ) {
+        DispatchQueue.main.async {
+            self.channel.invokeMethod("didReceiveMessageWithReply", arguments: message) { reply in
+                // A Dart handler that threw, or none registered at all, still
+                // has to answer something: leaving `replyHandler` uncalled
+                // makes the counterpart's send time out.
+                replyHandler(reply as? [String: Any] ?? [:])
+            }
+        }
     }
 
     public func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
-        channel.invokeMethod("didReceiveApplicationContext", arguments: applicationContext)
+        invokeOnMain("didReceiveApplicationContext", applicationContext)
+    }
+
+    /// WCSession delivers its callbacks on a background queue, while a
+    /// `FlutterMethodChannel` may only be touched from the platform thread.
+    private func invokeOnMain(_ method: String, _ arguments: Any?) {
+        DispatchQueue.main.async {
+            self.channel.invokeMethod(method, arguments: arguments)
+        }
     }
 }
