@@ -1,3 +1,7 @@
+## 0.2.10
+
+- Removes unnecessary library names
+
 ## 0.2.9
 
 - Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
