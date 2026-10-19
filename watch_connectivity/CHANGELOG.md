@@ -1,3 +1,7 @@
+## 0.2.11
+
+- Fixes an Android crash when application context is read before the local node is ready (#48)
+
 ## 0.2.10
 
 - Removes unnecessary library names
