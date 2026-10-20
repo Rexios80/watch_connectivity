@@ -1,0 +1,3 @@
+-keep class com.garmin.** { *; }
+-keep class com.garmin.android.connectiq.** { *; }
+-keep class com.garmin.android.apps.connectmobile.** { *; }
