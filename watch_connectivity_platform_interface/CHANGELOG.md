@@ -1,3 +1,7 @@
+## 0.4.1
+
+- Removes the deprecated `package:flutter/material.dart` import
+
 ## 0.4.0
 
 - Use uuid to identify instances across isolates
